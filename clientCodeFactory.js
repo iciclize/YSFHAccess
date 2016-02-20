@@ -1,31 +1,21 @@
+var uglify = require('uglify-js');
+
 function overrideXHR(forwardUrlPrefix) {
-    return '(function() {' + '\n' +
-        'var proxied = window.XMLHttpRequest.prototype.open;' + '\n' +
-        'window.XMLHttpRequest.prototype.open = function() {' + '\n' +
-            'var anchorElement = document.createElement("a");' + '\n' +
-            'anchorElement.href = arguments[1];' + '\n' +
-            'if (arguments[1].substr(0, "' + forwardUrlPrefix + '".length) != "' + forwardUrlPrefix + '")' + '\n' +
-            'arguments[1] = "' + forwardUrlPrefix + '" + encodeURIComponent(anchorElement.href);' + '\n' +
-            'console.log( arguments );' + '\n' +
-            'return proxied.apply(this, [].slice.call(arguments));' + '\n' +
-        '};' + '\n' +
+    return '(function() {' +
+        'var proxied = window.XMLHttpRequest.prototype.open;' +
+        'window.XMLHttpRequest.prototype.open = function() {' +
+            'arguments[1] = new URL(arguments[1], location.href).href;' +
+            'if (arguments[1].substr(0, "' + forwardUrlPrefix + '".length) != "' + forwardUrlPrefix + '")' +
+            'arguments[1] = "' + forwardUrlPrefix + '" + encodeURIComponent(arguments[1]);' +
+            'console.log( arguments );' +
+            'return proxied.apply(this, [].slice.call(arguments));' +
+        '};' +
     '})();'
 }
 
-var YSFHResolveURLScript = require('fs').readFileSync(__dirname + '/clientCode/YSFHResolveURL.js', {encoding: 'utf8'});
-var defineSetterScript = require('fs').readFileSync(__dirname + '/clientCode/defineSetter.js', {encoding: 'utf8'});
-
-function YSFHResolveURL() {
-    return YSFHResolveURLScript;
-}
-
-
-function defineSetter() {
-    return defineSetterScript;
-}
+var defineSetterScript = uglify.minify(__dirname + '/clientCode/defineSetter.js');
 
 module.exports = {
     overrideXHR: overrideXHR,
-    YSFHResolveURL: YSFHResolveURL,
-    defineSetter: defineSetter
+    defineSetter: defineSetterScript.code
 };
