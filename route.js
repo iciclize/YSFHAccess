@@ -4,6 +4,8 @@ var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
 var cheerio = require('cheerio');
+var iconv = require('iconv-lite');
+var characterDetector = require('jschardet');
 
 var server = http.createServer();
 
@@ -50,23 +52,30 @@ function mustBeReplaced(contentType) {
 }
 
 function respondResource(req, res, forwardURL) {
-    req.setEncoding('utf8');
-	var forward = request({
+    var options = {
 		method: req.method,
-		uri: forwardURL
-	}, function onResponseEnd(error, response, body) {
+		uri: forwardURL,
+        encoding: null,
+        headers: {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
+        }
+	};
+    
+	var forward = request(options, function onResponseEnd(error, response, body) {
         if (error) { console.error(error); return }
         var convertedText = '';
         var contentType = response.headers['content-type'] || '';
         if (contentType.match('text/html')) {
+            body = iconv.decode(body, characterDetector.detect(body).encoding || 'utf-8');
             convertedText = convertURLOnHTML(req.headers.host, url.parse(forwardURL), body);
         } else if (contentType.match('text/css')) {
+            body = iconv.decode(body, characterDetector.detect(body).encoding || 'utf-8');
             convertedText = convertURLOnCSS(req.headers.host, url.parse(forwardURL), body);
         }
         
         if (convertedText) {
             if (!res.headersSent) {
-                res.setHeader('Content-Length', Buffer.byteLength(convertedText, 'utf8'));
+                res.setHeader('Content-Length', Buffer.byteLength(convertedText, 'binary'));
             }
 			res.end(convertedText);
 		}
