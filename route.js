@@ -2,40 +2,40 @@ var url = require('url');
 var path = require('path');
 var request = require('request');
 var http = require('http');
-var urlValidator = require('valid-url');
+var URLValidator = require('valid-url');
 var cheerio = require('cheerio');
 
 var server = http.createServer();
 
 server.on('request', function (req, res) {
     var proxyHost = req.headers.host;
-    var proxyUrl = req.url;
-	var forwardUrl = getForwardUrl(req, proxyUrl);
-    if (forwardUrl == null) {
+    var proxyURL = req.url;
+	var forwardURL = getForwardURL(req, proxyURL);
+    if (forwardURL == null) {
         res.writeHead(404);
         res.end('114514');
     } else {
-        respondResource(req, res, forwardUrl);
+        respondResource(req, res, forwardURL);
     }
 });
 
-function getForwardUrl(req, proxyUrl) {
-    if (typeof proxyUrl != 'string') return null; // Error('The first parameter must be string.');
-    if (proxyUrl[0] != '/') return null; // Error('The first letter must be "/".');
-    var forwardUrl = '';
-    if (proxyUrl.substr(0, 5) == '/http') {
-	   forwardUrl = decodeURIComponent(unescape(proxyUrl.substr(1)));
+function getForwardURL(req, proxyURL) {
+    if (typeof proxyURL != 'string') return null; // Error('The first parameter must be string.');
+    if (proxyURL[0] != '/') return null; // Error('The first letter must be "/".');
+    var forwardURL = '';
+    if (proxyURL.substr(0, 5) == '/http') {
+	   forwardURL = decodeURIComponent(unescape(proxyURL.substr(1)));
     } else if (req.headers.referer) {
         var refererObject = url.parse(req.headers.referer);
-        var refererUrl = decodeURIComponent(refererObject.path.substr(1));
-        refererObject = url.parse(refererUrl);
-        forwardUrl = url.resolve(refererObject.protocol + '//' + refererObject.host, proxyUrl);
+        var refererURL = decodeURIComponent(refererObject.path.substr(1));
+        refererObject = url.parse(refererURL);
+        forwardURL = url.resolve(refererObject.protocol + '//' + refererObject.host, proxyURL);
     }
     
-    if (urlValidator.isWebUri(forwardUrl)) {
-		return forwardUrl;
+    if (URLValidator.isWebUri(forwardURL)) {
+		return forwardURL;
 	} else {
-		return null; // Error('The parameter "' + forwardUrl  + '" is not web uri.');
+		return null; // Error('The parameter "' + forwardURL  + '" is not web uri.');
 	}
 }
 
@@ -49,19 +49,19 @@ function mustBeReplaced(contentType) {
     });
 }
 
-function respondResource(req, res, forwardUrl) {
+function respondResource(req, res, forwardURL) {
     req.setEncoding('utf8');
 	var forward = request({
 		method: req.method,
-		uri: forwardUrl
+		uri: forwardURL
 	}, function onResponseEnd(error, response, body) {
         if (error) { console.error(error); return }
         var convertedText = '';
         var contentType = response.headers['content-type'] || '';
         if (contentType.match('text/html')) {
-            convertedText = convertURLOnHTML(req.headers.host, url.parse(forwardUrl), body);
+            convertedText = convertURLOnHTML(req.headers.host, url.parse(forwardURL), body);
         } else if (contentType.match('text/css')) {
-            convertedText = convertURLOnCSS(req.headers.host, url.parse(forwardUrl), body);
+            convertedText = convertURLOnCSS(req.headers.host, url.parse(forwardURL), body);
         }
         
         if (convertedText) {
@@ -98,9 +98,9 @@ function getURLPropertyName(tagName) {
     }
 }
 
-function convertURLOnHTML(proxyHost, forwardUrlObject, html) {
-	var forwardUrlPrefix = 'http://' + proxyHost + '/';
-    var clientScript = clientCodes.defineSetter + clientCodes.overrideXHR(forwardUrlPrefix);
+function convertURLOnHTML(proxyHost, forwardURLObject, html) {
+	var forwardURLPrefix = 'http://' + proxyHost + '/';
+    var clientScript = clientCodes.defineSetter + clientCodes.overrideXHR(forwardURLPrefix);
     
     var $ = cheerio.load(html);
     $('head').prepend($('<script>').text(clientScript));
@@ -108,16 +108,16 @@ function convertURLOnHTML(proxyHost, forwardUrlObject, html) {
         var prop = getURLPropertyName(this.tagName);
         if (!this.attribs[prop]) return;
         var value = this.attribs[prop].trim();
-        if (!urlValidator.isWebUri(value)) {
+        if (URLValidator.isWebUri(value)) {
+            this.attribs[prop] = forwardURLPrefix + encodeURIComponent(value);
+		} else {
             if (value[0] == '#') return;
             if (value.substr(0, 10) == 'javascript') return;
 			if (value.substr(0, 2) == '//') {
-				this.attribs[prop] = forwardUrlPrefix + encodeURIComponent(forwardUrlObject.protocol + value);
+				this.attribs[prop] = forwardURLPrefix + encodeURIComponent(forwardURLObject.protocol + value);
 			} else {
-				this.attribs[prop] = forwardUrlPrefix + encodeURIComponent(url.resolve(forwardUrlObject.href, value));
+				this.attribs[prop] = forwardURLPrefix + encodeURIComponent(url.resolve(forwardURLObject.href, value));
 			}
-		} else {
-            this.attribs[prop] = forwardUrlPrefix + encodeURIComponent(value);
         }
     });
     
@@ -125,12 +125,26 @@ function convertURLOnHTML(proxyHost, forwardUrlObject, html) {
 }
 
 function convertURLOnCSS(proxyHost, forwardURLObject, css) {
-    var reg = /url\(['"]?([^\)'"][^:\)'"]+)['"]?\)/g;
-    css.replace(reg, function (cssUrl) {
-        console.log(cssUrl.match(/url\((.+)\)/i));
-        return '114514';
+    var forwardURLPrefix = 'http://' + proxyHost + '/';
+    var reg = /url\((['"])?([^']*?)(['"])?\)/g;
+    css = css.replace(reg, function (entireCssURL, quoteStart, cssURL, quoteEnd) {
+        quoteStart = quoteStart || '';
+        quoteEnd = quoteEnd || '';
+        var forwardCssURL = '';
+        if (URLValidator.isWebUri(cssURL)) {
+            forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + encodeURIComponent(cssURL) + quoteEnd + ')';
+        } else {
+            if (cssURL.substr(0, 5) == 'data:') {
+                forwardCssURL = 'url(' + quoteStart + cssURL + quoteEnd + ')';  
+            } else if (cssURL.substr(0, 2) == '//') {
+				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + encodeURIComponent(forwardURLObject.protocol + cssURL) + quoteEnd + ')';
+			} else {
+				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + encodeURIComponent(url.resolve(forwardURLObject.href, cssURL)) + quoteEnd + ')';
+			}
+        }
+        console.log(forwardCssURL);
+        return forwardCssURL;
     });
-    
     return css;
 }
 
