@@ -18,7 +18,7 @@ server.on('request', function (req, res) {
         res.end('114514');
     } else {
         console.log(req.url, req.headers);
-        respondResource(req, res, forwardURL);
+        bypassResource(req, res, forwardURL);
     }
 });
 
@@ -52,7 +52,7 @@ function mustBeReplaced(contentType) {
     });
 }
 
-function respondResource(req, res, forwardURL) {
+function bypassResource(req, res, forwardURL) {
     var options = {
 		method: req.method,
 		uri: forwardURL,
