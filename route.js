@@ -17,6 +17,7 @@ server.on('request', function (req, res) {
         res.writeHead(404);
         res.end('114514');
     } else {
+        console.log(req.url, req.headers);
         respondResource(req, res, forwardURL);
     }
 });
@@ -151,7 +152,6 @@ function convertURLOnCSS(proxyHost, forwardURLObject, css) {
 				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + encodeURIComponent(url.resolve(forwardURLObject.href, cssURL)) + quoteEnd + ')';
 			}
         }
-        console.log(forwardCssURL);
         return forwardCssURL;
     });
     return css;
