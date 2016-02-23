@@ -6,6 +6,7 @@ var URLValidator = require('valid-url');
 var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
 var characterDetector = require('jschardet');
+var base64 = require('js-base64').Base64;
 
 var server = http.createServer();
 
@@ -17,22 +18,21 @@ server.on('request', function (req, res) {
         res.writeHead(404);
         res.end('114514');
     } else {
-        console.log(req.url, req.headers);
         bypassResource(req, res, forwardURL);
     }
 });
 
 function getForwardURL(req, proxyURL) {
-    if (typeof proxyURL != 'string') return null; // Error('The first parameter must be string.');
-    if (proxyURL[0] != '/') return null; // Error('The first letter must be "/".');
+    if (typeof proxyURL != 'string') return null;
     var forwardURL = '';
-    if (proxyURL.substr(0, 5) == '/http') {
-	   forwardURL = decodeURIComponent(unescape(proxyURL.substr(1)));
-    } else if (req.headers.referer) {
-        var refererObject = url.parse(req.headers.referer);
-        var refererURL = decodeURIComponent(refererObject.path.substr(1));
-        refererObject = url.parse(refererURL);
-        forwardURL = url.resolve(refererObject.protocol + '//' + refererObject.host, proxyURL);
+    forwardURL = base64.decode(proxyURL.substr(1));
+    if (req.headers.referer) {
+        if (forwardURL.substr(0, 4) != 'http') {
+            var refererObject = url.parse(req.headers.referer);
+            var refererURL = base64.decode(refererObject.path.substr(1));
+            refererObject = url.parse(refererURL);
+            forwardURL = url.resolve(refererObject.protocol + '//' + refererObject.host, forwardURL);
+        }
     }
     
     if (URLValidator.isWebUri(forwardURL)) {
@@ -57,9 +57,7 @@ function bypassResource(req, res, forwardURL) {
 		method: req.method,
 		uri: forwardURL,
         encoding: null,
-        headers: {
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
-        }
+        //headers: req.headers
 	};
     
 	var forward = request(options, function onResponseEnd(error, response, body) {
@@ -110,7 +108,7 @@ function getURLPropertyName(tagName) {
 
 function convertURLOnHTML(proxyHost, forwardURLObject, html) {
 	var forwardURLPrefix = 'http://' + proxyHost + '/';
-    var clientScript = clientCodes.defineSetter + clientCodes.overrideXHR(forwardURLPrefix);
+    var clientScript = clientCodes.defineSetter + '\n' + clientCodes.base64URLEncoder + '\n' + clientCodes.overrideXHR(forwardURLPrefix);
     
     var $ = cheerio.load(html);
     $('head').prepend($('<script>').text(clientScript));
@@ -119,14 +117,14 @@ function convertURLOnHTML(proxyHost, forwardURLObject, html) {
         if (!this.attribs[prop]) return;
         var value = this.attribs[prop].trim();
         if (URLValidator.isWebUri(value)) {
-            this.attribs[prop] = forwardURLPrefix + encodeURIComponent(value);
+            this.attribs[prop] = forwardURLPrefix + base64.encodeURI(value);
 		} else {
             if (value[0] == '#') return;
             if (value.substr(0, 10) == 'javascript') return;
 			if (value.substr(0, 2) == '//') {
-				this.attribs[prop] = forwardURLPrefix + encodeURIComponent(forwardURLObject.protocol + value);
+				this.attribs[prop] = forwardURLPrefix + base64.encodeURI(forwardURLObject.protocol + value);
 			} else {
-				this.attribs[prop] = forwardURLPrefix + encodeURIComponent(url.resolve(forwardURLObject.href, value));
+				this.attribs[prop] = forwardURLPrefix + base64.encodeURI(url.resolve(forwardURLObject.href, value));
 			}
         }
     });
@@ -142,14 +140,14 @@ function convertURLOnCSS(proxyHost, forwardURLObject, css) {
         quoteEnd = quoteEnd || '';
         var forwardCssURL = '';
         if (URLValidator.isWebUri(cssURL)) {
-            forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + encodeURIComponent(cssURL) + quoteEnd + ')';
+            forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + base64.encodeURI(cssURL) + quoteEnd + ')';
         } else {
             if (cssURL.substr(0, 5) == 'data:') {
                 forwardCssURL = 'url(' + quoteStart + cssURL + quoteEnd + ')';  
             } else if (cssURL.substr(0, 2) == '//') {
-				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + encodeURIComponent(forwardURLObject.protocol + cssURL) + quoteEnd + ')';
+				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + base64.encodeURI(forwardURLObject.protocol + cssURL) + quoteEnd + ')';
 			} else {
-				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + encodeURIComponent(url.resolve(forwardURLObject.href, cssURL)) + quoteEnd + ')';
+				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + base64.encodeURI(url.resolve(forwardURLObject.href, cssURL)) + quoteEnd + ')';
 			}
         }
         return forwardCssURL;
