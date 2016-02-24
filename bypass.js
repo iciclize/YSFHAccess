@@ -24,8 +24,15 @@ server.on('request', function (req, res) {
 
 function getForwardURL(req, proxyURL) {
     if (typeof proxyURL != 'string') return null;
-    var forwardURL = '';
-    forwardURL = base64.decode(proxyURL.substr(1));
+    var forwardURL = (function () {
+        var forwardURL = proxyURL.substr(1);
+        var exclamationIndex = forwardURL.indexOf('?');
+        if (exclamationIndex == -1) {
+            return base64.decode(forwardURL);
+        } else {
+            return base64.decode(forwardURL.substr(0, exclamationIndex)) + forwardURL.substr(exclamationIndex);
+        }
+    })();
     if (req.headers.referer) {
         if (forwardURL.substr(0, 4) != 'http') {
             var refererObject = url.parse(req.headers.referer);
@@ -59,6 +66,8 @@ function bypassResource(req, res, forwardURL) {
         encoding: null,
         //headers: req.headers
 	};
+    
+    console.log(req.headers);
     
 	var forward = request(options, function onResponseEnd(error, response, body) {
         if (error) { console.error(error); return }
