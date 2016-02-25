@@ -26,6 +26,7 @@ function getForwardURL(req, proxyURL) {
     if (typeof proxyURL != 'string') return null;
     var forwardURL = (function () {
         var forwardURL = proxyURL.substr(1);
+        if (forwardURL.match(/\./g)) return forwardURL;
         var exclamationIndex = forwardURL.indexOf('?');
         if (exclamationIndex == -1) {
             return base64.decode(forwardURL);
@@ -64,7 +65,10 @@ function bypassResource(req, res, forwardURL) {
 		method: req.method,
 		uri: forwardURL,
         encoding: null,
-        //headers: req.headers
+        headers: {
+            'User-Agent': req.headers['user-agent'],
+            'cookie': req.headers['cookie']
+        }
 	};
     
     console.log(req.headers);
