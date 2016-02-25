@@ -104,9 +104,9 @@ function bypassResource(req, res, forwardURL) {
 var clientCodes = require('./clientCodeFactory');
 
 function getURLPropertyName(tagName) {
-    if (tagName == 'a' || tagName == 'link' || tagName == 'button') {
+    if (tagName == 'a' || tagName == 'link' || tagName == 'button' )  {
         return 'href';
-    } else if (tagName == 'script' || tagName == 'img' || tagName == 'iframe' || tagName == 'frame') {
+    } else if (tagName == 'script' || tagName == 'img' || tagName == 'iframe' || tagName == 'frame' || tagName == 'embed') {
         return 'src';
     } else if (tagName == 'form') {
         return 'action';
@@ -121,7 +121,7 @@ function convertURLOnHTML(proxyHost, forwardURLObject, html) {
     
     var $ = cheerio.load(html);
     $('head').prepend($('<script>').text(clientScript));
-    $('a, link, button, script, img, iframe, frame, form, body').each(function () {
+    $('a, link, button, embed, script, img, iframe, frame, form, body').each(function () {
         var prop = getURLPropertyName(this.tagName);
         if (!this.attribs[prop]) return;
         var value = this.attribs[prop].trim();
