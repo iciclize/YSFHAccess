@@ -107,39 +107,123 @@ function bypassResource(req, res, forwardURL) {
 
 var clientCodes = require('./clientCodeFactory');
 
-function getURLPropertyName(tagName) {
-    if (tagName == 'a' || tagName == 'link' || tagName == 'button' )  {
-        return 'href';
-    } else if (tagName == 'script' || tagName == 'img' || tagName == 'iframe' || tagName == 'frame' || tagName == 'embed') {
-        return 'src';
-    } else if (tagName == 'form') {
-        return 'action';
-    } else if (tagName == 'body') {
-        return 'background';
-    }
-}
 
-function convertURLOnHTML(proxyHost, forwardURLObject, html) {
+function convertURLOnHTML(proxyHost, forwardURLObject, htmlDoc) {
+    
+    function replaceURLAnyway(html) {
+        var document = '';
+        var currentIndex = 0;
+        while (currentIndex < html.length) {
+            var tagStartIndex = html.indexOf('<', currentIndex);
+            if (tagStartIndex != -1) {
+                document += html.substring(currentIndex, tagStartIndex);
+                currentIndex = tagStartIndex + 1;
+                var tag = '';
+                var tagEndIndex = html.indexOf('>', currentIndex);
+                if (tagEndIndex != -1) {
+                    tag = html.substring(tagStartIndex, tagEndIndex + 1);
+                    currentIndex = tagEndIndex + 1;
+                    document += tag.replace(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g, function (value) {
+                        return forwardURLPrefix + base64.encodeURI(value);
+                    });
+                } else {
+                    document += html.substr(currentIndex);
+                }
+            } else {
+                document += html.substr(currentIndex);
+                currentIndex = html.length;
+            }
+        }
+        return document;
+    }
+    
+    function getURLPropertyName(tagName) {
+        switch (tagName) {
+            case 'a':
+            case 'area':
+            case 'base':
+            case 'link':
+            case 'button':
+                return ['href'];
+                break;
+                
+            case 'script':
+            case 'embed':
+                return ['src'];
+                break;
+                
+            case 'iframe':
+            case 'frame':
+                return ['src', 'longdsec'];
+                break;
+                
+            case 'img':
+                return ['src', 'longdesc', 'usemap'];
+                break;
+                
+            case 'input':
+                return ['usemap'];
+                break;
+                
+            case 'form':
+                return ['action'];
+                break;
+                
+            case 'body':
+                return ['background'];
+                break;
+                
+            case 'blockquote':
+            case 'q':
+            case 'ins':
+            case 'del':
+                return ['cite'];
+                break;
+                
+            case 'object':
+                return ['classid', 'codebase', 'data', 'usemap'];
+                break;
+                
+            case 'applet':
+                return ['code', 'codebase'];
+                break;
+                
+            case 'head':
+                return ['profile'];
+                break;
+             
+             default:
+                return [];
+                break;
+        }
+    }
+    
 	var forwardURLPrefix = 'http://' + proxyHost + '/';
     var clientScript = clientCodes.defineSetter + '\n' + clientCodes.base64URLEncoder + '\n' + clientCodes.overrideXHR(forwardURLPrefix);
+    var html = replaceURLAnyway(htmlDoc);
     
     var $ = cheerio.load(html);
     $('head').prepend($('<script>').text(clientScript));
     $('a, link, button, embed, script, img, iframe, frame, form, body').each(function () {
-        var prop = getURLPropertyName(this.tagName);
-        if (!this.attribs[prop]) return;
-        var value = this.attribs[prop].trim();
-        if (URLValidator.isWebUri(value)) {
-            this.attribs[prop] = forwardURLPrefix + base64.encodeURI(value);
-		} else {
-            if (value[0] == '#') return;
-            if (value.substr(0, 10) == 'javascript') return;
-			if (value.substr(0, 2) == '//') {
-				this.attribs[prop] = forwardURLPrefix + base64.encodeURI(forwardURLObject.protocol + value);
-			} else {
-				this.attribs[prop] = forwardURLPrefix + base64.encodeURI(url.resolve(forwardURLObject.href, value));
-			}
+        var props = getURLPropertyName(this.tagName);
+        for (var i = 0; i < props.length; i++) {
+            var prop = props[i];
+            if (!this.attribs[prop]) return;
+            var value = this.attribs[prop].trim();
+            if (URLValidator.isWebUri(value)) {
+                this.attribs[prop] = forwardURLPrefix + base64.encodeURI(value);
+            } else {
+                if (value[0] == '#') return;
+                if (value.substr(0, 10) == 'javascript') return;
+                if (value.substr(0, 2) == '//')
+                    this.attribs[prop] = forwardURLPrefix + base64.encodeURI(forwardURLObject.protocol + value);
+                else
+                    this.attribs[prop] = forwardURLPrefix + base64.encodeURI(url.resolve(forwardURLObject.href, value));
+            }
         }
+    });
+    $('style').each(function () {
+        $(this).text(convertURLOnCSS(proxyHost, forwardURLObject, $(this).text()));
     });
     
 	return $.html();
