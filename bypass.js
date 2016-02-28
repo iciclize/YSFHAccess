@@ -61,6 +61,7 @@ function mustBeReplaced(contentType) {
 }
 
 function bypassResource(req, res, forwardURL) {
+    /*
     var options = {
 		method: req.method,
 		uri: forwardURL,
@@ -69,9 +70,9 @@ function bypassResource(req, res, forwardURL) {
             'Content-Type': req.headers['content-type'],
             'User-Agent': req.headers['user-agent'],
             'cookie': req.headers['cookie']
-        }
+        },
+        body: req
 	};
-    
 	var forward = request(options, function onResponseEnd(error, response, body) {
         if (error) { console.error(error); return }
         var convertedText = '';
@@ -102,6 +103,25 @@ function bypassResource(req, res, forwardURL) {
             forward.pipe(res);
         }
 	});
+    */
+    var forward = request({uri: forwardURL});
+    forward.on('request', function () {
+        console.log('request: ', arguments);
+    });
+    forward.on('response', function () {
+        console.log('response: ', arguments);
+    });
+    forward.on('data', function () {
+        console.log('data: ', arguments);
+    });
+    forward.on('end', function () {
+        console.log('DONE');
+    });
+    forward.on('error', function () {
+        console.log('error: ', arguments);
+    });
+    
+    req.pipe(forward).pipe(res);
     
 }
 
