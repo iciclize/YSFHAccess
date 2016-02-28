@@ -66,12 +66,11 @@ function bypassResource(req, res, forwardURL) {
 		uri: forwardURL,
         encoding: null,
         headers: {
+            'Content-Type': req.headers['content-type'],
             'User-Agent': req.headers['user-agent'],
             'cookie': req.headers['cookie']
         }
 	};
-    
-    console.log(req.headers);
     
 	var forward = request(options, function onResponseEnd(error, response, body) {
         if (error) { console.error(error); return }
@@ -103,6 +102,7 @@ function bypassResource(req, res, forwardURL) {
             forward.pipe(res);
         }
 	});
+    
 }
 
 var clientCodes = require('./clientCodeFactory');
