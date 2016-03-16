@@ -4,9 +4,12 @@ var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
 var cheerio = require('cheerio');
-var iconv = require('iconv-lite');
+var Iconv = require('iconv').Iconv;
 var characterDetector = require('jschardet');
 var base64 = require('js-base64').Base64;
+
+var HTMLCONVERTER = require('./HTMLConverter.js');
+var HTMLConverter = new HTMLCONVERTER({highWaterMark: 3, encoding: 'utf8', decodeStrings: false});
 
 var server = http.createServer();
 
@@ -42,7 +45,7 @@ function getForwardURL(req, proxyURL) {
             forwardURL = url.resolve(refererObject.protocol + '//' + refererObject.host, forwardURL);
         }
     }
-    
+
     if (URLValidator.isWebUri(forwardURL)) {
 		return forwardURL;
 	} else {
@@ -84,7 +87,7 @@ function bypassResource(req, res, forwardURL) {
             body = iconv.decode(body, characterDetector.detect(body).encoding || 'utf-8');
             convertedText = convertURLOnCSS(req.headers.host, url.parse(forwardURL), body);
         }
-        
+
         if (convertedText) {
             if (!res.headersSent) {
                 res.setHeader('Content-Length', Buffer.byteLength(convertedText, 'binary'));
@@ -92,44 +95,46 @@ function bypassResource(req, res, forwardURL) {
 			res.end(convertedText);
 		}
     });
-    
+
 	forward.on('response', function onReceiveResponse(response) {
 		var contentType = response.headers['content-type'] || '';
         for (var name in response.headers) res.setHeader(name, response.headers[name]);
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Security-Policy', 'connect-src *');
-        
+
         if (!mustBeReplaced(contentType)) {
             forward.pipe(res);
         }
 	});
     */
-    var forward = request({uri: forwardURL});
-    forward.on('request', function () {
-        console.log('request: ', arguments);
+    var forward = request({uri: forwardURL, gzip: true});
+    forward.on('request', function (request) {
+
     });
-    forward.on('response', function () {
-        console.log('response: ', arguments);
+    forward.on('response', function (response) {
+        response;
     });
-    forward.on('data', function () {
-        console.log('data: ', arguments);
+    forward.on('data', function (data) {
+        console.log(data.toString());
     });
     forward.on('end', function () {
-        console.log('DONE');
+
     });
     forward.on('error', function () {
-        console.log('error: ', arguments);
+
     });
-    
-    req.pipe(forward).pipe(res);
-    
+    // var conv = new Iconv('utf-8', 'utf-8');
+    req.pipe(forward)
+        .pipe(HTMLConverter)
+        .pipe(res);
+
 }
 
 var clientCodes = require('./clientCodeFactory');
 
 
 function convertURLOnHTML(proxyHost, forwardURLObject, htmlDoc) {
-    
+
     function replaceURLAnyway(html) {
         var document = '';
         var currentIndex = 0;
@@ -156,7 +161,7 @@ function convertURLOnHTML(proxyHost, forwardURLObject, htmlDoc) {
         }
         return document;
     }
-    
+
     function getURLPropertyName(tagName) {
         switch (tagName) {
             case 'a':
@@ -166,62 +171,62 @@ function convertURLOnHTML(proxyHost, forwardURLObject, htmlDoc) {
             case 'button':
                 return ['href'];
                 break;
-                
+
             case 'script':
             case 'embed':
                 return ['src'];
                 break;
-                
+
             case 'iframe':
             case 'frame':
                 return ['src', 'longdsec'];
                 break;
-                
+
             case 'img':
                 return ['src', 'longdesc', 'usemap'];
                 break;
-                
+
             case 'input':
                 return ['usemap'];
                 break;
-                
+
             case 'form':
                 return ['action'];
                 break;
-                
+
             case 'body':
                 return ['background'];
                 break;
-                
+
             case 'blockquote':
             case 'q':
             case 'ins':
             case 'del':
                 return ['cite'];
                 break;
-                
+
             case 'object':
                 return ['classid', 'codebase', 'data', 'usemap'];
                 break;
-                
+
             case 'applet':
                 return ['code', 'codebase'];
                 break;
-                
+
             case 'head':
                 return ['profile'];
                 break;
-             
+
              default:
                 return [];
                 break;
         }
     }
-    
+
 	var forwardURLPrefix = 'http://' + proxyHost + '/';
     var clientScript = clientCodes.defineSetter + '\n' + clientCodes.base64URLEncoder + '\n' + clientCodes.overrideXHR(forwardURLPrefix);
     var html = replaceURLAnyway(htmlDoc);
-    
+
     var $ = cheerio.load(html);
     $('head').prepend($('<script>').text(clientScript));
     $('a, link, button, embed, script, img, iframe, frame, form, body').each(function () {
@@ -245,7 +250,7 @@ function convertURLOnHTML(proxyHost, forwardURLObject, htmlDoc) {
     $('style').each(function () {
         $(this).text(convertURLOnCSS(proxyHost, forwardURLObject, $(this).text()));
     });
-    
+
 	return $.html();
 }
 
@@ -260,7 +265,7 @@ function convertURLOnCSS(proxyHost, forwardURLObject, css) {
             forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + base64.encodeURI(cssURL) + quoteEnd + ')';
         } else {
             if (cssURL.substr(0, 5) == 'data:') {
-                forwardCssURL = 'url(' + quoteStart + cssURL + quoteEnd + ')';  
+                forwardCssURL = 'url(' + quoteStart + cssURL + quoteEnd + ')';
             } else if (cssURL.substr(0, 2) == '//') {
 				forwardCssURL = 'url(' + quoteStart + forwardURLPrefix + base64.encodeURI(forwardURLObject.protocol + cssURL) + quoteEnd + ')';
 			} else {
