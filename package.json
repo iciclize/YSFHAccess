@@ -18,6 +18,7 @@
   "homepage": "https://github.com/IceSofticon30th/YSFHBypass",
   "dependencies": {
     "cheerio": "^0.20.0",
+    "htmlparser2": "^3.9.0",
     "iconv": "^2.1.11",
     "js-base64": "^2.1.9",
     "jschardet": "^1.4.1",

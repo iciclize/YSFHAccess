@@ -1,196 +1,92 @@
-var Transform = require('stream').Transform;
-var util = require('util');
-var ScanningStatus = {
-    outOfTag: 0,
-    startOfTagFound: 10,
-    slashOfEndTagFound: 20,
-    readingTagName: 30,
-    endOfTagNameFound: 40,
-    findingStartOfAttributeName: 50,
-    readingAttributeName: 60,
-    endOfAttributeNameFound: 70,
-    startOfAttributeValueDetected: 80,
-    readingAttributeValue: 90,
-    startOfAttributeValueQuoteDetected: 100,
-    endOfAttributeValueQuoteFound: 110,
-    endOfTagFound: 120,
-    startOfEndTagNameDetected: 130,
-    endOfEndTagNameFound: 140,
-    endOfEndTagFound: 150,
-    startOfCommentTagDetected: 160,
-    startOfCommentTagFound: 170,
-    endOfCommentTagDetected: 180,
-    endOfCOmmentTagFound: 190
-};
+var URLValidator = require('valid-url');
+var trumpet = require('trumpet');
+var url = require('url');
+var base64 = require('js-base64').Base64;
 
-var globalIndex = 0;
-var sentIndex = 0;
-var tagStartIndex = null;
-var tagName = null;
-var attributeNameStartIndex = null;
-var attributeName = null;
-var attributeValueQuote = null;
-var attributeValueStartIndex = null;
-var attributeValue = null;
-var document = '';
-var array = [];
-
-function HTMLConverter(option) {
-    Transform.call(this, option);
-    this.scanState = ScanningStatus.outOfTag;
-}
-
-util.inherits(HTMLConverter, Transform);
-
-HTMLConverter.prototype._transform = function (chunk, encoding, callback) {
-    document += chunk;
-    array.push(chunk);
-    for (var i = 0; i < chunk.length; globalIndex++, i++) {
-        var character = chunk[i];
-        switch (this.scanState) {
-            case ScanningStatus.outOfTag:
-                if (character === '<') {
-                    this.scanState = ScanningStatus.startOfTagFound;
-                }
-                break;
-
-            case ScanningStatus.startOfTagFound:
-                if (character === '>') {
-                    resetTagData();
-                    this.scanState = ScanningStatus.outOfTag;
-                } else if (character === '/') {
-                    this.scanState = ScanningStatus.slashOfEndTagFound;
-                } else {
-                    this.scanState = ScanningStatus.readingTagName;
-                    tagStartIndex = globalIndex;
-                }
-                break;
-
-            case ScanningStatus.readingTagName:
-                if (character === '>') {
-                    resetTagData();
-                    this.scanState = ScanningStatus.outOfTag;
-                    break;
-                } else if (character === '/') {
-                    this.scanState = ScanningStatus.slashOfEndTagFound;
-                } else if (isWhiteSpace(character)) {
-                    this.scanState = ScanningStatus.findingStartOfAttributeName;
-                    tagName = document.substring(tagStartIndex, globalIndex);
-                }
-                break;
-
-            case ScanningStatus.findingStartOfAttributeName:
-                if (!isWhiteSpace(character)) {
-                    attributeNameStartIndex = globalIndex;
-                    this.scanState = ScanningStatus.readingAttributeName;
-                } else if (character === '>') {
-                    resetTagData();
-                    this.scanState = ScanningStatus.outOfTag;
-                } else if (character === '/') {
-                    this.scanState = ScanningStatus.slashOfEndTagFound;
-                }
-                break;
-
-            case ScanningStatus.readingAttributeName:
-                if (character === '=') {
-                    attributeName = document.substring(attributeNameStartIndex, globalIndex);
-                    this.scanState = ScanningStatus.startOfAttributeValueDetected;
-                    if (isAttributeURL(tagName, attributeName)) {
-                        this.push(document.substring(sentIndex, globalIndex));
-                        sentIndex = globalIndex;
+function URLConverter(proxyHost, forwardURL) {
+    var _proxyHost = proxyHost;
+    var _forwardURL = forwardURL;
+    var _forwardURLObject = url.parse(_forwardURL);
+    
+    var tr = trumpet();
+    tr.selectAll(
+        'a,area,base,link,button,script,embed,iframe,frame,img,input,form,body,blockquote,q,ins,del,object,applet,head',
+        function (elem) {
+            getURLPropertyNames(elem.name).forEach(function (prop) {
+                elem.getAttribute(prop, function (rawURL) {
+                    if (rawURL) {
+                        var u = convertToForwardURL(rawURL);
+                        elem.setAttribute(prop, u);
+                        console.log(rawURL, u);
                     }
-                } else if (isWhiteSpace(character)) {
-                    attributeName = document.substring(attributeNameStartIndex, globalIndex);
-                    this.scanState = ScanningStatus.findingStartOfAttributeName;
-                }
-                break;
+                });
+            });
+        });
 
-            case ScanningStatus.startOfAttributeValueDetected:
-                if (isWhiteSpace(character)) {
-                    this.scanState = ScanningStatus.findingStartOfAttributeName;
-                } else if (character === '"') {
-                    attributeValueQuote = true;
-                    this.scanState = ScanningStatus.startOfAttributeValueQuoteDetected;
-                }
-                break;
+    tr.on('error', function (err) {
+        console.dir(err);
+    });
+    
+    return tr;
+    
+    function convertToForwardURL(rawURL) {
+        var forwardURLPrefix = 'http://' + _proxyHost + '/';
+        if (URLValidator.isWebUri(rawURL)) return forwardURLPrefix + base64.encodeURI(rawURL);
+        if (rawURL == '#') return rawURL;
+        if (rawURL.substr(0, 10) == 'javascript') return rawURL;
+        if (rawURL.substr(0, 2) == '//') return forwardURLPrefix + base64.encodeURI(_forwardURLObject.protocol + rawURL);
+        
+        return forwardURLPrefix + base64.encodeURI(url.resolve(_forwardURLObject.href, rawURL));
+    }
 
-            case ScanningStatus.startOfAttributeValueQuoteDetected:
-                attributeValueStartIndex = globalIndex;
-                this.scanState = ScanningStatus.readingAttributeValue;
-                break;
+    function getURLPropertyNames(tagName) {
+        switch (tagName) {
+            case 'a':
+            case 'area':
+            case 'base':
+            case 'link':
+            case 'button':
+                return ['href'];
 
-            case ScanningStatus.readingAttributeValue:
-                if (attributeValueQuote) {
-                    if (character === '"') {
-                        attributeValue = document.substring(attributeValueStartIndex, globalIndex);
-                        if (isAttributeURL(tagName, attributeName)) {
-                            this.push(document.substring(sentIndex, attributeValueStartIndex));
-                            this.push(convertToForwardURL(attributeName));
-                            sentIndex = i;
-                        }
-                        this.scanState = ScanningStatus.findingStartOfAttributeName;
-                    }
-                } else {
-                    if (isWhiteSpace(character)) {
-                        attributeValue = document.substring(attributeValueStartIndex, globalIndex);
-                        if (isAttributeURL(tagName, attributeName)) {
-                            this.push(document.substring(sentIndex, attributeValueStartIndex));
-                            this.push(convertToForwardURL(attributeName));
-                            sentIndex = i;
-                        }
-                        this.scanState = ScanningStatus.findingStartOfAttributeName;
-                    }
-                }
-                break;
+            case 'script':
+            case 'embed':
+                return ['src'];
 
-            case ScanningStatus.slashOfEndTagFound:
-                if (character === '>') {
-                    this.scanState = ScanningStatus.outOfTag;
-                    resetTagData();
-                    this.push(document.substring(sentIndex, globalIndex));
-                }
-                break;
+            case 'iframe':
+            case 'frame':
+                return ['src', 'longdsec'];
+
+            case 'img':
+                return ['src', 'longdesc', 'usemap'];
+
+            case 'input':
+                return ['usemap'];
+
+            case 'form':
+                return ['action'];
+
+            case 'body':
+                return ['background'];
+
+            case 'blockquote':
+            case 'q':
+            case 'ins':
+            case 'del':
+                return ['cite'];
+
+            case 'object':
+                return ['classid', 'codebase', 'data', 'usemap'];
+
+            case 'applet':
+                return ['code', 'codebase'];
+
+            case 'head':
+                return ['profile'];
 
             default:
-                break;
+                return [];
         }
     }
-    this.push(document.substring(sentIndex, globalIndex));
-    callback();
-};
-
-HTMLConverter.prototype._flush = function (callback) {
-    resetTagData();
-    document = '';
-    globalIndex = 0;
-    callback();
-};
-
-function isWhiteSpace(character) {
-    if (character === ' ') return true;
-    if (character === '\t') return true;
-    if (character === '\r') return true;
-    if (character === '\n') return true;
-    return false;
 }
 
-function resetTagData() {
-    tagStartIndex = null;
-    tagName = null;
-    attributeNameStartIndex = null;
-    attributeName = null;
-    attributeValueQuote = null;
-    attributeValueStartIndex = null;
-    attributeValue = null;
-}
-
-function isAttributeURL(tagname, attributename) {
-    /* something great */
-    return true;
-}
-
-function convertToForwardURL(url) {
-    return url;
-}
-
-module.exports = HTMLConverter;
+module.exports = URLConverter;
