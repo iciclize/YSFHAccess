@@ -55,9 +55,7 @@ function getForwardURL(proxyURL, referer) {
 
 function bypass(req, res, proxyHost, forwardURL) {
     
-    var forward = request({ uri: forwardURL, gzip: true}, function (err, respo, body) {
-        console.log(respo.body);
-    });
+    var forward = request({ uri: forwardURL, gzip: true});
     
     forward.on('response', function (response) {
         if (res.headersSent) {
@@ -75,7 +73,7 @@ function bypass(req, res, proxyHost, forwardURL) {
         var contentType = response.headers['content-type'] || '';
         var htmlConverter = HTMLConverter(proxyHost, forwardURL);
         if (contentType.match('text/html')) {
-            response.pipe(htmlConverter).pipe(res);
+            forward.pipe(htmlConverter).pipe(res);
         }
         else response.pipe(res);
     });
