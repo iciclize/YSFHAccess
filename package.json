@@ -17,12 +17,12 @@
   },
   "homepage": "https://github.com/IceSofticon30th/YSFHBypass",
   "dependencies": {
-    "cheerio": "^0.20.0",
-    "htmlparser2": "^3.9.0",
     "iconv": "^2.1.11",
     "js-base64": "^2.1.9",
     "jschardet": "^1.4.1",
     "request": "^2.69.0",
+    "stringstream": "0.0.5",
+    "trumpet": "^1.7.2",
     "uglify-js": "^2.6.1",
     "valid-url": "^1.0.9"
   }

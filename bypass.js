@@ -3,12 +3,12 @@ var path = require('path');
 var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
-var cheerio = require('cheerio');
 var Iconv = require('iconv').Iconv;
 var characterDetector = require('jschardet');
 var base64 = require('js-base64').Base64;
 
 var HTMLConverter = require('./HTMLConverter.js');
+var CSSConverter = require('./CSSConverter.js');
 
 var server = http.createServer();
 
@@ -69,13 +69,18 @@ function bypass(req, res, proxyHost, forwardURL) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Security-Policy', 'connect-src *');
         res.setHeader('Content-Encoding', 'utf-8');
+        res.removeHeader('Content-Length');
         
         var contentType = response.headers['content-type'] || '';
-        var htmlConverter = HTMLConverter(proxyHost, forwardURL);
         if (contentType.match('text/html')) {
+            var htmlConverter = HTMLConverter(proxyHost, forwardURL);
             forward.pipe(htmlConverter).pipe(res);
+        } else if (contentType.match('text/css')) {
+            var cssConverter = CSSConverter(proxyHost, forwardURL);
+            forward.pipe(cssConverter).pipe(res);
+        } else {
+            forward.pipe(res);
         }
-        else response.pipe(res);
     });
     
     forward.on('error', function (err) {
@@ -84,7 +89,5 @@ function bypass(req, res, proxyHost, forwardURL) {
     
     req.pipe(forward);
 }
-
-var clientCodes = require('./clientCodeFactory');
 
 server.listen(3015);

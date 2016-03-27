@@ -2,6 +2,7 @@ var URLValidator = require('valid-url');
 var trumpet = require('trumpet');
 var url = require('url');
 var base64 = require('js-base64').Base64;
+var clientCodes = require('./clientCodeFactory');
 
 function URLConverter(proxyHost, forwardURL) {
     var _proxyHost = proxyHost;
@@ -9,16 +10,35 @@ function URLConverter(proxyHost, forwardURL) {
     var _forwardURLObject = url.parse(_forwardURL);
     
     var tr = trumpet();
+    
+    tr.select('head', function (elem) {
+        var first = true;
+        var headStream = elem.createStream();
+        headStream.on('data', function (data) {
+            if (first) {
+                headStream.write('<script>'
+                    + clientCodes.overrideXHR(proxyHost)
+                    + clientCodes.base64URLEncoder()
+                    + clientCodes.defineSetter()
+                    + '</script>\n'
+                    + data);
+                first = false;
+            } else {
+                headStream.write(data);
+            }
+        });
+        headStream.on('end', function () {
+            headStream.end();
+        })
+    });
+    
     tr.selectAll(
         'a,area,base,link,button,script,embed,iframe,frame,img,input,form,body,blockquote,q,ins,del,object,applet,head',
         function (elem) {
             getURLPropertyNames(elem.name).forEach(function (prop) {
                 elem.getAttribute(prop, function (rawURL) {
-                    if (rawURL) {
-                        var u = convertToForwardURL(rawURL);
-                        elem.setAttribute(prop, u);
-                        console.log(rawURL, u);
-                    }
+                    if (!rawURL) return;
+                    elem.setAttribute(prop, convertToForwardURL(rawURL));
                 });
             });
         });

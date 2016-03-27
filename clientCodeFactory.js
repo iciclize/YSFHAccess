@@ -1,5 +1,8 @@
 var uglify = require('uglify-js');
 
+var defineSetterScript = uglify.minify(__dirname + '/clientCode/defineSetter.js');
+var base64URLEncodingScript = uglify.minify(__dirname + '/clientCode/base64.min.js');
+
 function overrideXHR(forwardUrlPrefix) {
     return '(function() {' +
         'var proxied = window.XMLHttpRequest.prototype.open;' +
@@ -15,11 +18,16 @@ function overrideXHR(forwardUrlPrefix) {
     '})();'
 }
 
-var defineSetterScript = uglify.minify(__dirname + '/clientCode/defineSetter.js');
-var base64URLEncodingScript = uglify.minify(__dirname + '/clientCode/base64.min.js');
+function defineSetter() {
+    return defineSetterScript.code;
+}
+
+function base64URLEncoder() {
+    return base64URLEncodingScript.code;
+}
 
 module.exports = {
-    base64URLEncoder: base64URLEncodingScript.code,
-    defineSetter: defineSetterScript.code,
+    base64URLEncoder: base64URLEncoder,
+    defineSetter: defineSetter,
     overrideXHR: overrideXHR
 };
