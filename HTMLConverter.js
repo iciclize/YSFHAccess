@@ -8,6 +8,7 @@ function URLConverter(proxyHost, forwardURL) {
     var _proxyHost = proxyHost;
     var _forwardURL = forwardURL;
     var _forwardURLObject = url.parse(_forwardURL);
+    var _forwardURLPrefix = 'http://' + proxyHost + '/';
     
     var tr = trumpet();
     
@@ -17,7 +18,7 @@ function URLConverter(proxyHost, forwardURL) {
         headStream.on('data', function (data) {
             if (first) {
                 headStream.write('<script>'
-                    + clientCodes.overrideXHR(proxyHost)
+                    + clientCodes.overrideXHR(_forwardURLPrefix)
                     + clientCodes.base64URLEncoder()
                     + clientCodes.defineSetter()
                     + '</script>\n'
@@ -38,6 +39,7 @@ function URLConverter(proxyHost, forwardURL) {
             getURLPropertyNames(elem.name).forEach(function (prop) {
                 elem.getAttribute(prop, function (rawURL) {
                     if (!rawURL) return;
+                    if (rawURL.substr(0, 5) === 'data:') return;
                     elem.setAttribute(prop, convertToForwardURL(rawURL));
                 });
             });

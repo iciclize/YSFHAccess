@@ -17,20 +17,6 @@ var IN_BRACKET_START = 28;
 var IN_URL_VALUE = 31;
 var IN_BRACKET_END = 34;
 
-var codes = {
-    curlyBracketLeft: '{'.charCodeAt(0),
-    curlyBracketRight: '}'.charCodeAt(0),
-    colon: ':'.charCodeAt(0),
-    semicolon: ';'.charCodeAt(0),
-    u: 'u'.charCodeAt(0),
-    r: 'r'.charCodeAt(0),
-    l: 'l'.charCodeAt(0),
-    roundBracketLeft: '('.charCodeAt(0),
-    roundBracketRight: ')'.charCodeAt(0),
-    singleQuote: "'".charCodeAt(0),
-    doubleQuote: '"'.charCodeAt(0)
-};
-
 function CSSParseStream(proxyHost, forwardURL) {
     if (!(this instanceof CSSParseStream)) return new CSSParseStream(proxyHost, forwardURL);
     Transform.call(this);
@@ -130,32 +116,17 @@ CSSParseStream.prototype._transform = function (chunk, encoding, callback) {
                 break;
                 
             case IN_URL_VALUE:
-                if (character === this._quoteType) {
-                    if (!this._isBase64image) {
-                        this._buffer += chunk.substring(bufferedIndex, i);
-                        this.push(this.convertToForwardURL(this._buffer));
-                        bufferedIndex = i;
-                    }
-                    this._scanState = IN_BRACKET_END;
-                } else if (this._quoteType === '') {
-                    if (character === ')') {
-                        if (!this._isBase64image) {
-                            this._buffer += chunk.substring(bufferedIndex, i);
-                            this.push(this.convertToForwardURL(this._buffer));
-                            bufferedIndex = i;
-                        }
-                        this._scanState = IN_BRACKET_END;
-                    }
-                }
-                
-                if (this._buffer.length === 5) { 
+                if ((character === this._quoteType)
+                || ( (character === ')') && (this._quoteType === '') ) ) {
+                    this._buffer += chunk.substring(bufferedIndex, i);
                     if (this._buffer.substr(0, 5) === 'data:') {
-                        this._isBase64image = true;
-                        this._buffer = '';
-                        this.push('data:');
-                        bufferedIndex = i;
-                        break;
+                        this.push(this._buffer);
+                    } else {
+                        this.push(this.convertToForwardURL(this._buffer));
                     }
+                    this._buffer = '';
+                    bufferedIndex = i;
+                    this._scanState = IN_BRACKET_END;
                 }
                     
                 break;

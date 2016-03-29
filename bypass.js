@@ -55,31 +55,42 @@ function getForwardURL(proxyURL, referer) {
 
 function bypass(req, res, proxyHost, forwardURL) {
     
-    var forward = request({ uri: forwardURL, gzip: true});
+    var forward = request({ uri: forwardURL, gzip: true });
     
     forward.on('response', function (response) {
+        
         if (res.headersSent) {
             forwardResponse.pipe(res);
             return;
         }
-         
+        
         for (var name in response.headers) {
             res.setHeader(name, response.headers[name]);
         }
+        
+        /* 
+        * http://stackoverflow.com/questions/28441357/node-request-piping-set-response-header
+        */
+        //forward.response = res;
+        
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Security-Policy', 'connect-src *');
-        res.setHeader('Content-Encoding', 'utf-8');
-        res.removeHeader('Content-Length');
         
         var contentType = response.headers['content-type'] || '';
         if (contentType.match('text/html')) {
+            res.removeHeader('Content-Length');
+            res.setHeader('Transfer-Encoding', 'chunked');
+            res.setHeader('Content-Encoding', 'utf-8');
             var htmlConverter = HTMLConverter(proxyHost, forwardURL);
             forward.pipe(htmlConverter).pipe(res);
         } else if (contentType.match('text/css')) {
+            res.removeHeader('Content-Length');
+            res.setHeader('Transfer-Encoding', 'chunked');
+            res.setHeader('Content-Encoding', 'utf-8');
             var cssConverter = CSSConverter(proxyHost, forwardURL);
-            forward.pipe(cssConverter).pipe(res);
+             forward.pipe(cssConverter).pipe(res);
         } else {
-            forward.pipe(res);
+            response.pipe(res);
         }
     });
     
