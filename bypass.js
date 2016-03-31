@@ -3,11 +3,10 @@ var path = require('path');
 var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
-var Iconv = require('iconv').Iconv;
-var characterDetector = require('jschardet');
 var base64 = require('js-base64').Base64;
 
-var HTMLConverter = require('./HTMLConverter.js');
+var HTMLCharset = require('html-charset');
+var HTMLUrlConverter = require('./HTMLUrlConverter.js');
 var CSSConverter = require('./CSSConverter.js');
 
 var server = http.createServer();
@@ -68,10 +67,6 @@ function bypass(req, res, proxyHost, forwardURL) {
             res.setHeader(name, response.headers[name]);
         }
         
-        /* 
-        * http://stackoverflow.com/questions/28441357/node-request-piping-set-response-header
-        */
-        //forward.response = res;
         
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Security-Policy', 'connect-src *');
@@ -81,14 +76,15 @@ function bypass(req, res, proxyHost, forwardURL) {
             res.removeHeader('Content-Length');
             res.setHeader('Transfer-Encoding', 'chunked');
             res.setHeader('Content-Encoding', 'utf-8');
-            var htmlConverter = HTMLConverter(proxyHost, forwardURL);
-            forward.pipe(htmlConverter).pipe(res);
+            var charsetConverter = HTMLCharset(response.headers);
+            var urlConverter = HTMLUrlConverter(proxyHost, forwardURL);
+            forward.pipe(charsetConverter).pipe(urlConverter).pipe(res);
         } else if (contentType.match('text/css')) {
             res.removeHeader('Content-Length');
             res.setHeader('Transfer-Encoding', 'chunked');
             res.setHeader('Content-Encoding', 'utf-8');
             var cssConverter = CSSConverter(proxyHost, forwardURL);
-             forward.pipe(cssConverter).pipe(res);
+            forward.pipe(cssConverter).pipe(res);
         } else {
             response.pipe(res);
         }
