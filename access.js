@@ -1,24 +1,31 @@
+var express = require('express');
+var cookieParser = require('cookie-parser');
+
 var url = require('url');
 var path = require('path');
+var qs = require('querystring');
 var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
-var base64 = require('js-base64').Base64;
+var blowfish = require('blowfish');
 
 var HTMLCharset = require('html-charset');
 var HTMLUrlConverter = require('./HTMLUrlConverter.js');
 var CSSCharset = require('css-charset');
 var CSSUrlConverter = require('./CSSUrlConverter.js');
 
-var server = http.createServer();
-
-server.on('request', function (req, res) {
-    var proxyHost = req.headers.host;
-    var proxyURL = req.url;
-	var forwardURL = getForwardURL(proxyURL, req.headers.referer);
+var app = express();
+app.use(cookieParser());
+app.get('/yjsnpi', function (req, res) {
+    res.end('ERR_IKISUGI');
+});
+app.all('/:url', function (req, res) {
+    var forwardURLPrefix = 'http://' + req.headers.host + '/';
+    var proxyURL = req.params.url;
+	var forwardURL = getForwardURL(proxyURL, req.query, req.headers.referer);
     
     if (forwardURL) {
-        bypass(req, res, proxyHost, forwardURL);
+        bypass(req, res, forwardURLPrefix, forwardURL);
     } else {
         res.writeHead(404);
         res.end('114514');
@@ -26,23 +33,24 @@ server.on('request', function (req, res) {
     
 });
 
-function getForwardURL(proxyURL, referer) {
+function getForwardURL(proxyURL, query, referer) {
     if (typeof proxyURL != 'string') return null;
     
     var forwardURL = (function () {
-        var forwardURL = proxyURL.substr(1);
+        var forwardURL = proxyURL;
         if (forwardURL.match(/\./g)) return forwardURL;
-        
-        var exclamationIndex = forwardURL.indexOf('?');
-        if (exclamationIndex == -1) return base64.decode(forwardURL);
-        
-        return base64.decode(forwardURL.substr(0, exclamationIndex)) + forwardURL.substr(exclamationIndex);
+        forwardURL = blowfish.decrypt(forwardURL);
+        if (URLValidator.isWebUri(forwardURL)) return forwardURL;
+        return proxyURL;
     })();
+    
+    var querystrings = qs.stringify(query);
+    forwardURL += (querystrings) ? '?' + querystrings : '';
     
     if (referer) {
         if (forwardURL.substr(0, 4) != 'http') {
             var refererObject = url.parse(referer);
-            var refererURL = base64.decode(refererObject.path.substr(1));
+            var refererURL = blowfish.decrypt(refererObject.pathname.substr(1)) + ((refererObject.query) ? '?' + refererObject.query : '');
             refererObject = url.parse(refererURL);
             forwardURL = url.resolve(refererObject.protocol + '//' + refererObject.host, forwardURL);
         }
@@ -53,7 +61,7 @@ function getForwardURL(proxyURL, referer) {
     return null;
 }
 
-function bypass(req, res, proxyHost, forwardURL) {
+function bypass(req, res, forwardURLPrefix, forwardURL) {
     
     var forward = request({ uri: forwardURL, gzip: true });
     
@@ -89,10 +97,10 @@ function bypass(req, res, proxyHost, forwardURL) {
             
             if (documentRegexp[0] == 'text/html') {
                 charsetConverter = HTMLCharset(contentType);
-                urlConverter = HTMLUrlConverter(proxyHost, forwardURL);
+                urlConverter = HTMLUrlConverter(forwardURLPrefix, forwardURL);
             } else {
                 charsetConverter = CSSCharset(contentType);
-                urlConverter = CSSUrlConverter(proxyHost, forwardURL);    
+                urlConverter = CSSUrlConverter(forwardURLPrefix, forwardURL);    
             }
             
             forward.pipe(charsetConverter).pipe(urlConverter).pipe(res);
@@ -109,4 +117,4 @@ function bypass(req, res, proxyHost, forwardURL) {
     req.pipe(forward);
 }
 
-server.listen(3015);
+app.listen(3015);

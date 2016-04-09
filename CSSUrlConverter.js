@@ -1,6 +1,6 @@
 var URLValidator = require('valid-url');
 var url = require('url');
-var base64 = require('js-base64').Base64;
+var blowfish = require('blowfish');
 var util = require('util');
 var StringStream = require('stringstream');
 var stringDecoder = require('string_decoder').StringDecoder;
@@ -17,8 +17,8 @@ var IN_BRACKET_START = 28;
 var IN_URL_VALUE = 31;
 var IN_BRACKET_END = 34;
 
-function CSSParseStream(proxyHost, forwardURL) {
-    if (!(this instanceof CSSParseStream)) return new CSSParseStream(proxyHost, forwardURL);
+function CSSParseStream(forwardURLPrefix, forwardURL) {
+    if (!(this instanceof CSSParseStream)) return new CSSParseStream(forwardURLPrefix, forwardURL);
     Transform.call(this);
     
     this._scanState = IN_SELECTOR;
@@ -26,18 +26,16 @@ function CSSParseStream(proxyHost, forwardURL) {
     this._buffer = '';
     this._isBase64image = false;
     
-    var _proxyHost = proxyHost;
     var _forwardURL = forwardURL;
     var _forwardURLObject = url.parse(_forwardURL);
     
     this.stringDecoder = new stringDecoder('utf8');
 
     this.convertToForwardURL = function convertToForwardURL(rawURL) {
-        var forwardURLPrefix = 'http://' + _proxyHost + '/';
-        if (URLValidator.isWebUri(rawURL)) return forwardURLPrefix + base64.encodeURI(rawURL);
-        if (rawURL.substr(0, 2) == '//') return forwardURLPrefix + base64.encodeURI(_forwardURLObject.protocol + rawURL);
+        if (URLValidator.isWebUri(rawURL)) return forwardURLPrefix + blowfish.encrypt(rawURL);
+        if (rawURL.substr(0, 2) == '//') return forwardURLPrefix + blowfish.encrypt(_forwardURLObject.protocol + rawURL);
         
-        return forwardURLPrefix + base64.encodeURI(url.resolve(_forwardURLObject.href, rawURL));
+        return forwardURLPrefix + blowfish.encrypt(url.resolve(_forwardURLObject.href, rawURL));
     }
     
     return this;
