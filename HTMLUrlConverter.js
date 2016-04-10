@@ -1,7 +1,7 @@
 var URLValidator = require('valid-url');
 var trumpet = require('trumpet');
 var url = require('url');
-var blowfish = require('blowfish');
+var base64 = require('js-base64').Base64;
 var clientCodes = require('./clientCodeFactory');
 
 function URLConverter(forwardURLPrefix, forwardURL) {
@@ -50,12 +50,12 @@ function URLConverter(forwardURLPrefix, forwardURL) {
     return tr;
     
     function convertToForwardURL(rawURL) {
-        if (URLValidator.isWebUri(rawURL)) return forwardURLPrefix + blowfish.encrypt(rawURL);
+        if (URLValidator.isWebUri(rawURL)) return forwardURLPrefix + base64.encodeURI(rawURL);
         if (rawURL == '#') return rawURL;
         if (rawURL.substr(0, 10) == 'javascript') return rawURL;
-        if (rawURL.substr(0, 2) == '//') return forwardURLPrefix + blowfish.encrypt(_forwardURLObject.protocol + rawURL);
+        if (rawURL.substr(0, 2) == '//') return forwardURLPrefix + base64.encodeURI(_forwardURLObject.protocol + rawURL);
         
-        return forwardURLPrefix + blowfish.encrypt(url.resolve(_forwardURLObject.href, rawURL));
+        return forwardURLPrefix + base64.encodeURI(url.resolve(_forwardURLObject.href, rawURL));
     }
 
     function getURLPropertyNames(tagName) {

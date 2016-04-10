@@ -7,7 +7,7 @@ var qs = require('querystring');
 var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
-var blowfish = require('blowfish');
+var base64 = require('js-base64').Base64;
 
 var HTMLCharset = require('html-charset');
 var HTMLUrlConverter = require('./HTMLUrlConverter.js');
@@ -39,7 +39,7 @@ function getForwardURL(proxyURL, query, referer) {
     var forwardURL = (function () {
         var forwardURL = proxyURL;
         if (forwardURL.match(/\./g)) return forwardURL;
-        forwardURL = blowfish.decrypt(forwardURL);
+        forwardURL = base64.decode(forwardURL);
         if (URLValidator.isWebUri(forwardURL)) return forwardURL;
         return proxyURL;
     })();
@@ -50,7 +50,7 @@ function getForwardURL(proxyURL, query, referer) {
     if (referer) {
         if (forwardURL.substr(0, 4) != 'http') {
             var refererObject = url.parse(referer);
-            var refererURL = blowfish.decrypt(refererObject.pathname.substr(1)) + ((refererObject.query) ? '?' + refererObject.query : '');
+            var refererURL = base64.decode(refererObject.pathname.substr(1)) + ((refererObject.query) ? '?' + refererObject.query : '');
             refererObject = url.parse(refererURL);
             forwardURL = url.resolve(refererObject.protocol + '//' + refererObject.host, forwardURL);
         }

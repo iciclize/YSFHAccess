@@ -17,15 +17,12 @@
   },
   "homepage": "https://github.com/IceSofticon30th/YSFHBypass",
   "dependencies": {
-    "blowfish": "^1.0.1",
     "cookie-parser": "^1.4.1",
     "css-charset": "0.0.4",
-    "css-tokenize": "^1.0.1",
     "express": "^4.13.4",
     "html-charset": "0.0.8",
     "js-base64": "^2.1.9",
     "request": "^2.69.0",
-    "stringstream": "0.0.5",
     "trumpet": "^1.7.2",
     "uglify-js": "^2.6.1",
     "valid-url": "^1.0.9"
