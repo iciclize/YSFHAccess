@@ -1,5 +1,5 @@
 var express = require('express');
-var cookieParser = require('cookie-parser');
+var session = require('express-session');
 
 var url = require('url');
 var path = require('path');
@@ -15,10 +15,21 @@ var CSSCharset = require('css-charset');
 var CSSUrlConverter = require('./CSSUrlConverter.js');
 
 var app = express();
-app.use(cookieParser());
+var sessionValidator = require('./session-validator.js');
+app.use(sessionValidator);
+/*
+var passport = require('./passport-login.js');
+app.use(session({ secret: '野獣先輩女の子説', cookie: { maxAge: 60000 } }));
+app.use(passport.initialize());
+app.use(passport.session());
+*/
+
 app.get('/yjsnpi', function (req, res) {
     res.end('ERR_IKISUGI');
 });
+
+app.post('/login')
+
 app.all('/:url', function (req, res) {
     var forwardURLPrefix = 'http://' + req.headers.host + '/';
     var proxyURL = req.params.url;
