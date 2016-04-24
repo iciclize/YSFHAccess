@@ -15,20 +15,15 @@ var CSSCharset = require('css-charset');
 var CSSUrlConverter = require('./CSSUrlConverter.js');
 
 var app = express();
-var sessionValidator = require('./session-validator.js');
-app.use(sessionValidator);
-/*
-var passport = require('./passport-login.js');
-app.use(session({ secret: '野獣先輩女の子説', cookie: { maxAge: 60000 } }));
-app.use(passport.initialize());
-app.use(passport.session());
-*/
-
-app.get('/yjsnpi', function (req, res) {
-    res.end('ERR_IKISUGI');
+var sessionValidator = require('ysfhcsine-validator')({
+    noSession: function (req, res, next) {
+        res.redirect('http://csine.ysfh.black/login');
+    },
+    /*invalidSession: function (req, res, next) {
+        
+    }*/
 });
-
-app.post('/login')
+app.use(sessionValidator);
 
 app.all('/:url', function (req, res) {
     var forwardURLPrefix = 'http://' + req.headers.host + '/';
