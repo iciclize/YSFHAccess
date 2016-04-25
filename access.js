@@ -1,3 +1,6 @@
+var HOST = 'access.ysfh.black';
+HOST = 'localhost';
+
 var express = require('express');
 var session = require('express-session');
 
@@ -8,6 +11,7 @@ var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
 var base64 = require('js-base64').Base64;
+var cookie = require('cookie');
 
 var HTMLCharset = require('html-charset');
 var HTMLUrlConverter = require('./HTMLUrlConverter.js');
@@ -17,13 +21,17 @@ var CSSUrlConverter = require('./CSSUrlConverter.js');
 var app = express();
 var sessionValidator = require('ysfhcsine-validator')({
     noSession: function (req, res, next) {
-        res.redirect('http://csine.ysfh.black/login');
+        //res.redirect('http://csine.ysfh.black/login');
+        next();
     },
     /*invalidSession: function (req, res, next) {
         
     }*/
 });
-app.use(sessionValidator);
+var cookieParser = require('cookie-parser');
+
+//app.use(cookieParser());
+//app.use(sessionValidator);
 
 app.all('/:url', function (req, res) {
     var forwardURLPrefix = 'http://' + req.headers.host + '/';
@@ -77,8 +85,43 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     }
     
     function headerOverride(response) {
-        for (var name in response.headers)
-            res.setHeader(name, response.headers[name]);
+        for (var name in response.headers) {
+            if (name.toLowerCase() == 'set-cookie') {
+                var cookies = response.headers['set-cookie'] || [];
+                cookies = cookies.map(function (item) {
+                    
+                    var pair = item.substring(0, item.indexOf(';')); 
+                    var eq_idx = pair.indexOf('=');
+                    if (eq_idx < 0) return;
+
+                    var key = pair.substr(0, eq_idx).trim();
+                    var val = pair.substr(++eq_idx, pair.length).trim();
+                    if ('"' == val[0]) val = val.slice(1, -1);
+                    val = decodeURIComponent(val);
+
+                    var c = cookie.parse(item);
+                    c.domain = HOST;
+                    c.path = '/';
+                    c.expires = null;
+                    c.secure = false;
+                    c.httpOnly = false;
+                    c.firstPartyOnly = false;
+                    
+                    // TODO: keyに情報を持たせる
+                    return cookie.serialize(key, val, c);
+                });
+                res.setHeader('set-cookie', cookies);
+            } else {
+                res.setHeader(name, response.headers[name]);
+            }
+        }
+    }
+    
+    function convertCookie(response) {
+        var setCookies = response.headers['set-cookie'] || [];
+        setCookies.forEach(function (item) {
+            cookie.parse(item);
+        });
     }
     
     forward.on('response', function (response) {
@@ -90,6 +133,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         
         headerOverride(response);
         allowAccess();
+        // convertCookie(response);
         
         var contentType = response.headers['content-type'] || '';
         

@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/IceSofticon30th/YSFHBypass",
   "dependencies": {
+    "cookie": "^0.2.3",
+    "cookie-parser": "^1.4.1",
     "css-charset": "0.0.4",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
@@ -27,6 +29,7 @@
     "request": "^2.69.0",
     "trumpet": "^1.7.2",
     "uglify-js": "^2.6.1",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "ysfhcsine-validator": "git+https://github.com/IceSofticon30th/ysfhcsine-validator.git"
   }
 }
