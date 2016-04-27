@@ -1,0 +1,97 @@
+html, body, h1, h2, h3, h4, h5, div, article, p, section, form, ul, li, a {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+.logo {
+    width: 640px;
+    margin: 0 auto;
+    padding: 20px 0 0;
+}
+
+.copy {
+    margin-top: 20px;
+    font-size: 18px;
+    text-align: center;
+    color: gray;
+}
+
+.urlform {
+    padding: 30px 0; 
+}
+
+.urlbar {
+    display: block;
+    margin: 30px auto;
+    width: 640px;
+    height: 48px;
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 4px;
+}
+
+.supports {
+    margin-top: 20px;
+    display: table;
+    width: 640px;
+    margin: 0 auto;
+}
+
+.supports li {
+    display: table-cell;
+    padding: 0 10px;
+}
+
+.supports a {
+    display: block;
+    text-align: center;
+    border-radius: 4px;
+    padding: 6px;
+    color: white;
+    font-size: 14px;
+}
+
+.supports span {
+    display: inline-block;
+    position: relative;
+    top: -5px;
+}
+
+.supports .fa {
+    font-size: 32px;
+    border-right: 1px solid white;
+    padding-right: 10px;
+    margin-right: 10px;
+}
+
+.youtube {
+    background-color: #cd201f;
+}
+
+.twitter {
+    background-color: #55acee;
+}
+
+.facebook {
+    background-color: #315096;
+}
+
+.google {
+    background-color: #ea4335;
+}
+
+.feature ul {
+    display: table;
+    width: 1vw;
+}
+
+.feature ul li {
+    display: table-cell;
+}
+
+.feature .fa {
+    font-size: 148px;
+}
