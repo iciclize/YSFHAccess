@@ -61,26 +61,42 @@ html, body, h1, h2, h3, h4, h5, div, article, p, section, form, ul, li, a {
 }
 
 .supports .fa {
-    font-size: 32px;
+    font-size: 28px;
     border-right: 1px solid white;
     padding-right: 10px;
     margin-right: 10px;
 }
 
-.youtube {
+.youtube-b {
     background-color: #cd201f;
 }
 
-.twitter {
+.twitter-b {
     background-color: #55acee;
 }
 
-.facebook {
+.facebook-b {
     background-color: #315096;
 }
 
-.google {
+.google-b {
     background-color: #ea4335;
+}
+
+.youtube {
+    color: #cd201f;
+}
+
+.twitter {
+    color: #55acee;
+}
+
+.facebook {
+    color: #315096;
+}
+
+.google {
+    color: #ea4335;
 }
 
 .feature ul {
@@ -93,5 +109,9 @@ html, body, h1, h2, h3, h4, h5, div, article, p, section, form, ul, li, a {
 }
 
 .feature .fa {
-    font-size: 148px;
+    width: 162px;
+    height: 162px;
+    background-color: yellowgreen;
+    border-radius: 50%;
+    font-size: 114px;
 }
