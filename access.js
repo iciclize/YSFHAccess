@@ -33,21 +33,25 @@ var cookieParser = require('cookie-parser');
 //app.use(cookieParser());
 //app.use(sessionValidator);
 
-app.all('/:url', function (req, res) {
+app.all('/*', function (req, res) {
     var forwardURLPrefix = 'http://' + req.headers.host + '/';
-    var proxyURL = req.params.url;
-	var forwardURL = getForwardURL(proxyURL, req.query, req.headers.referer);
+    var proxyURL = req.url.substr(1);
+	var forwardURL = getForwardURL(proxyURL, req, res);
     
     if (forwardURL) {
         bypass(req, res, forwardURLPrefix, forwardURL);
     } else {
-        res.writeHead(404);
-        res.end('114514');
+        if (!res.headersSent) {
+            res.writeHead(404);
+            res.end('114514');
+        }
     }
     
 });
 
-function getForwardURL(proxyURL, query, referer) {
+function getForwardURL(proxyURL, req) {
+    var query = req.query;
+    var referer = req.headers.referer;
     if (typeof proxyURL != 'string') return null;
     
     var forwardURL = (function () {
@@ -77,7 +81,7 @@ function getForwardURL(proxyURL, query, referer) {
 
 function bypass(req, res, forwardURLPrefix, forwardURL) {
     
-    var forward = request({ uri: forwardURL, gzip: true });
+    var forward = request({ uri: forwardURL, gzip: true});
     
     function allowAccess() {
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -117,14 +121,21 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         }
     }
     
-    function convertCookie(response) {
-        var setCookies = response.headers['set-cookie'] || [];
-        setCookies.forEach(function (item) {
-            cookie.parse(item);
-        });
-    }
-    
     forward.on('response', function (response) {
+        
+        if (response.statusCode >= 300
+        && response.statusCode < 400
+        && response.headers.location) {
+            console.log(JSON.stringify(response.headers));
+            function convertToForwardURL(rawURL) {
+                var _forwardURLObject = url.parse(forwardURL);
+                if (URLValidator.isWebUri(rawURL)) return forwardURLPrefix + base64.encodeURI(rawURL);
+                if (rawURL.substr(0, 2) == '//') return forwardURLPrefix + base64.encodeURI(_forwardURLObject.protocol + rawURL);
+                
+                return forwardURLPrefix + base64.encodeURI(url.resolve(_forwardURLObject.href, rawURL));
+            }
+            response.headers.location = convertToForwardURL(response.headers.location);
+        }
         
         if (res.headersSent) {
             forwardResponse.pipe(res);
@@ -133,7 +144,6 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         
         headerOverride(response);
         allowAccess();
-        // convertCookie(response);
         
         var contentType = response.headers['content-type'] || '';
         
@@ -141,6 +151,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         if (documentRegexp) {
             res.removeHeader('Content-Length');
             res.removeHeader('Content-Encoding');
+            res.setHeader('Content-Type', documentRegexp[0] + '; charset=UTF-8');
             res.setHeader('Transfer-Encoding', 'chunked');
             
             var charsetConverter, urlConverter;
