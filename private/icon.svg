@@ -10,14 +10,14 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="596.37408"
-   height="165.92114"
-   viewBox="0 0 596.37409 165.92114"
+   width="64"
+   height="66.43998"
+   viewBox="0 0 64.000002 66.439979"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="access.svg"
-   inkscape:export-filename="/Users/i-noc/Dev/Web/YSFHAccess/access.png"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/Users/i-noc/Dev/Web/YSFHAccess/private/access.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -53,8 +53,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="292.55306"
-     inkscape:cy="76.391728"
+     inkscape:cx="104.10822"
+     inkscape:cy="26.934241"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -84,8 +84,8 @@
     <inkscape:grid
        type="xygrid"
        id="grid4996"
-       originx="-15.463603"
-       originy="-20.470074" />
+       originx="-63.104796"
+       originy="-69.927561" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -103,36 +103,20 @@
      inkscape:label="レイヤー 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-15.463603,-865.97092)"
+     transform="translate(-63.104794,-915.9946)"
      style="display:inline" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="レイヤー 2"
      style="display:inline"
-     transform="translate(-15.463603,-13.608761)">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:170.38749695px;line-height:125%;font-family:'.HeitiUI TC';-inkscape-font-specification:'.HeitiUI TC, Ultra-Light';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a8a8a8;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="164.55696"
-       y="187.02571"
-       id="text4262"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4264"
-         x="164.55696"
-         y="187.02571"
-         style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:170.38749695px;line-height:125%;font-family:'.HeitiUI TC';-inkscape-font-specification:'.HeitiUI TC, Ultra-Light';text-align:start;letter-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a8a8a8;fill-opacity:1"><tspan
-   style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:170.38749695px;line-height:125%;font-family:'.HeitiUI TC';-inkscape-font-specification:'.HeitiUI TC, Ultra-Light';text-align:start;letter-spacing:-5px;writing-mode:lr-tb;text-anchor:start"
-   id="tspan5804">cc</tspan>e<tspan
-   style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:170.38749695px;line-height:125%;font-family:'.HeitiUI TC';-inkscape-font-specification:'.HeitiUI TC, Ultra-Light';text-align:start;letter-spacing:2px;writing-mode:lr-tb;text-anchor:start"
-   id="tspan5816">s</tspan>s</tspan></text>
+     transform="translate(-63.104795,-63.632436)">
     <g
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:221.14239502px;line-height:125%;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="text4314" />
     <g
        id="g5575"
-       transform="matrix(1.4080458,0,0,1.4080458,-78.668048,-16.875978)">
+       transform="matrix(0.56382524,0,0,0.56382524,25.41156,51.4254)">
       <path
          inkscape:connector-curvature="0"
          id="path4641"
@@ -145,17 +129,5 @@
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccccccc" />
     </g>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65.89046478px;line-height:125%;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic';letter-spacing:0px;word-spacing:0px;fill:#02bdff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="173.71274"
-       y="62.125763"
-       id="text5587"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan5589"
-         x="173.71274"
-         y="62.125763"
-         style="letter-spacing:-2px">YSFH</tspan></text>
   </g>
 </svg>
