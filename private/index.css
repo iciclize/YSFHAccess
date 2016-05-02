@@ -5,10 +5,33 @@ html, body, h1, h2, h3, h4, h5, div, article, p, section, form, ul, li, a {
     font-weight: normal;
 }
 
+body {
+    background: hsl(196, 0%, 96%);
+    color: #666;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 h1 {
     font-size: 36px;
     margin: 0 0 32px;
 }
+
+section {
+    line-height: 36px;
+    margin: 32px auto;
+}
+
+.container {
+    padding: 40px 0;
+    width: 960px;
+    margin: 0 auto;
+    font-size: 18px;
+}
+
 
 .top {
     padding: 40px 0;
@@ -20,11 +43,24 @@ h1 {
     padding: 20px 0 0;
 }
 
+.appname {
+    display: inline-block;
+}
+
+.ysfh {
+    font-size: 36px;
+    line-height: 36px;
+}
+
+.access {
+    font-size: 132px;
+    line-height: 132px;
+}
+
 .copy {
     margin-top: 20px;
     font-size: 18px;
     text-align: center;
-    color: gray;
 }
 
 .urlform {
@@ -47,7 +83,6 @@ h1 {
 */
 
 .links {
-    margin-top: 20px;
     width: 640px;
     margin: 0 auto;
     display: flex;
@@ -110,37 +145,31 @@ h1 {
 */
 
 .feature {
-    background-color:  #31dfac;
+    line-height: 36px;
+    background-color:  white;
     padding: 36px 0;
 }
 
-.feature .wrapper{
-    width: 960px;
-    margin: 0 auto;
-    font-size: 18px;
-    color: hsl(0, 0%, 100%);
-}
-
-.feature {
-    line-height: 36px;
+.feature .container{
+    color: hsl(0, 0%, 33%);
 }
 
 .feature ul {
     list-style: none;
-    margin: 6px auto;
-    padding: 4px 0 4px 1em;
-    background-color: hsla(0, 0%, 69%, 0.55);
-    border-left: 5px solid hsla(162,73%,93%,.7);
+    margin: 12px auto;
+    padding: 2px 0 2px 1em;
+    background-color: hsl(0, 0%, 98%);
+    border-left: 5px solid hsl(0, 0%, 78%);
 }
 
 .feature li {
-    margin: 8px auto;
+    margin: 4px auto;
 }
 
 .feature ul li::before {
     font-family: FontAwesome;
     content: '\f057';
-    color: hsl(0, 100%, 71%);
+    color: hsl(0, 100%, 61%);
     margin-right: 0.5em;
     margin-left: 1em;
 }
@@ -166,21 +195,21 @@ h1 {
 */
 
 .supports {
-    width: 960px;
-    margin: 0 auto;
-    background-color: hsl(206, 100%, 100%);
-    overflow: hidden;
-    padding: 40px 0;
-    color: #666;
+
+}
+
+.supports .container {
 }
 
 .supports ul {
     width: 960px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .supports ul li {
-    float: left;
     width: 280px;
     margin: 0 20px;
     list-style: none;
@@ -217,4 +246,79 @@ h1 {
     font-size: 16px;
     line-height: 28px;
     color: #666;
+}
+
+/*
+*    .guide
+*/
+
+.guide {
+
+}
+
+.guide .container {
+}
+
+/*
+*    .developer
+*/
+
+.developer {
+    background-color: hsl(0, 0%, 16%);
+    color: white;
+}
+
+.developer .container {
+}
+
+.developer img {
+    display: inline-block;
+    width: 128px;
+    height: 128px;
+}
+
+.developer .profile {
+    position: relative;
+    display: inline-block;
+    margin-left: 32px;
+    height: 128px;
+    vertical-align: top;
+}
+
+.developer .title {
+    font-size: 10px;
+    line-height: 12px;
+}
+
+.developer .name {
+    font-size: 36px;
+    line-height: 40px;
+}
+
+.developer .accounts {
+    font-size: 14px;
+    line-height: 18px;
+    position: absolute;
+    bottom: 0;
+}
+
+.developer .accounts a {
+    display: block;
+}
+
+.developer .fa {
+    margin-right: .5em;
+}
+
+/*
+*    .history
+*/
+
+.history {
+
+}
+
+.history .container {
+    width: 960px;
+    margin: 0 auto;
 }

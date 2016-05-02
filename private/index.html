@@ -8,7 +8,11 @@
     <body>
         <div class="top">
             <div class="logo">
-                <img alt="logo" src="./access_path.svg">
+                <img alt="logo" src="./access.svg" height="156px">
+                <p class="appname">
+                    <span class="ysfh">YSFH</span><br>
+                    <span class="access">Access</span>
+                </p>
                 <p class="copy">穴は一つしかないから―</p>
             </div>
             <form class="urlform">
@@ -39,7 +43,7 @@
         </div>
 
         <section class="feature">
-            <div class="wrapper">
+            <div class="container">
                 <h1>あらゆるWebサイトに自由にアクセス</h1>
                 <article>
                     <p>YSFH AccessはあらゆるWebサイトを閲覧可能にするWebアプリケーションです。</p>
@@ -55,41 +59,63 @@
         </section>
 
         <section class="supports">
-            <h1>主要なSNSに対応</h1>
-            <ul>
-                <li class="youtube">
-                    <div class="fa youtube">&#xf16a;</div>
-                    <h2>Youtube</h2>
-                    <p>Youtubeの動画の視聴に対応。話題の動画を探したり、お気に入りの動画をチェックしたりしよう。</p>
-                </li>
-                <li class="twitter">
-                    <div class="fa twitter">&#xf099;</div>
-                    <h2>Twitter</h2>
-                    <p>Twitter(モバイル版)に対応。今起きていることを見つけて、みんなの話題を知ろう。</p>
-                </li>
-                <li class="facebook">
-                    <div class="fa facebook">&#xf230;</div>
-                    <h2>Facebook</h2>
-                    <p>Facebook(モバイル版)に対応。学校や海外の友達とのつながりを深めよう。</p>
-                </li>
-            </ul>
+            <div class="container">
+                <h1>主要なSNSに対応</h1>
+                <ul>
+                    <li class="youtube">
+                        <div class="fa youtube">&#xf16a;</div>
+                        <h2>Youtube</h2>
+                        <p>Youtubeの動画の視聴に対応。話題の動画を探したり、お気に入りの動画をチェックしたりしよう。</p>
+                    </li>
+                    <li class="twitter">
+                        <div class="fa twitter">&#xf099;</div>
+                        <h2>Twitter</h2>
+                        <p>Twitter(モバイル版)に対応。今起きていることを見つけて、みんなの話題を知ろう。</p>
+                    </li>
+                    <li class="facebook">
+                        <div class="fa facebook">&#xf230;</div>
+                        <h2>Facebook</h2>
+                        <p>Facebook(モバイル版)に対応。学校や海外の友達とのつながりを深めよう。</p>
+                    </li>
+                </ul>
+            </div>
         </section>
 
-        <h1 style="clear: both;">使い方</h1>
-        <p>URLバーに、アクセスしたいサイトのアドレスを入力して、[Access]を押す。</p>
-        <p>または、利用したいサービスのボタンを押す</p>
-        <p>Javascriptの有効・無効を切り替えるスイッチ。ページが上手く表示されない時は、有効・無効を切り替えてから[Access]を押して再度ページを読み込んでみてください。</p>
+        <section class="guide">
+            <div class="container">
+                <h1>使い方</h1>
+                <p>URLバーに、アクセスしたいサイトのアドレスを入力して、[Access]を押す。</p>
+                <p>または、利用したいサービスのボタンを押す</p>
+                <p>Javascriptの有効・無効を切り替えるスイッチ。ページが上手く表示されない時は、有効・無効を切り替えてから[Access]を押して再度ページを読み込んでみてください。</p>
+            </div>
+        </section>
 
-        <h1>作ったひと</h1>
-        <p>YSFH 6期 3年次5組 猪野湧斗</p>
-        <p><i class="fa fa-twitter"></i>@iciclize</p>
-        <p><i class="fa fa-facebook"></i> IceSofticon30th</p>
+        <section class="developer">
+            <div class="container">
+                <h1>作ったひと</h1>
+                <img src="http://www.gravatar.com/avatar/e5ef3698ccb90ecd2a50b1440dd7ee37?s=128">
+                <div class="profile">
+                    <p class="title">横浜市立横浜サイエンスフロンティア高等学校 6期 3年次5組</p>
+                    <p class="name">猪野 湧斗</p>
+                    <p class="accounts">
+                        <a href="mailto:ino@ysfh.black"><i class="fa fa-envelope"></i>ino@ysfh.black</a>
+                        <a href="/aHR0cHM6Ly90d2l0dGVyLmNvbS9pY2ljbGl6ZQ"><i class="fa fa-twitter"></i>@iciclize</a>
+                        <a href="/aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL0ljZVNvZnRpY29uMzB0aA"><i class="fa fa-facebook-official"></i> IceSofticon30th</a>
+                    </p>
+                </div>
+            </div>
+        </section>
 
-        <h1>完成までの経緯</h1>
-        <h2>Proxysite.comもどきを作ろう</h2>        <p>サイエンスリテラシーやOCPDの授業などで度々必要になるインターネット。ところが、閲覧しようとしたページが規制されずに閲覧できることは珍しいものです。そんな規制を逃れるための手段としてproxysite.comを使うのが一般的でした。proxysite.comとはいわゆるWebプロキシサイトの一つで、Webサイトへのアクセスを代行することであらゆるサイトを閲覧可能にするサービスです。proxysite.comはYoutubeやTwitterなどの主要なSNSの閲覧に対応しています。しかしproxysite.comには、同じ場所から頻繁にアクセスすると、しばらくの間アクセスが制限されるという特徴があったため、すべての生徒が自由にWebサイトを閲覧することはできませんでした。そこで、2016年2月6日、proxysite.comに似たようなものを作ろうと思い立ち、YSFH Bypassという名前でプロジェクトを始めました。</p>
+        <section class="history">
+            <div class="container">
+                <h1>完成までの経緯</h1>
+                <h2>Proxysite.comもどきを作ろう</h2>
+                <p>サイエンスリテラシーやOCPDの授業などで度々必要になるインターネット。ところが、閲覧しようとしたページが規制されずに閲覧できることは珍しいものです。そんな規制を逃れるための手段としてproxysite.comを使うのが一般的でした。proxysite.comとはいわゆるWebプロキシサイトの一つで、Webサイトへのアクセスを代行することであらゆるサイトを閲覧可能にするサービスです。proxysite.comはYoutubeやTwitterなどの主要なSNSの閲覧に対応しています。しかしproxysite.comには、同じ場所から頻繁にアクセスすると、しばらくの間アクセスが制限されるという特徴があったため、すべての生徒が自由にWebサイトを閲覧することはできませんでした。そこで、2016年2月6日、proxysite.comに似たようなものを作ろうと思い立ち、YSFH Bypassという名前でプロジェクトを始めました。</p>
 
-        <h2>Proxysite.com、規制対象にぶち込まれる</h2>
-        <p>YSFH Bypassの製作開始からおよそ1ヶ月が経ち、YSFH Bypassの開発環境の上でYoutubeの動画を視聴する実験に成功したので、学校のPCで視聴テストをした結果、見事にYoutubeの再生に成功しました。それから数日が経ったころ、長らく利用していたproxysite.comがとうとうY・Y Netの規制の対象になりました。ということはYSFH Bypassを完成させて公開しても、結局しばらくしたら規制の対象になってしまうのではないかと考えた僕は、YSFH Bypassを会員制のWebサイトの裏に隠そうと考え、隠ぺい用のダミーサイト「YSFH cSINE」を作りました。その後、YSFH Bypassという名称をYSFH Accessに†悔い改めて†から、それをYSFH cSINEの中に隠してリリースしました。ついでに僕が1年生の頃に作ったAndroidアプリ「V2語録」とそのWeb版「V2 Online」を追加したのが今のYSFH cSINEです。</p>
+                <h2>Proxysite.com、規制対象にぶち込まれる</h2>
+                <p>YSFH Bypassの製作開始からおよそ1ヶ月が経ち、YSFH Bypassの開発環境の上でYoutubeの動画を視聴する実験に成功したので、学校のPCで視聴テストをした結果、見事にYoutubeの再生に成功しました。それから数日が経ったころ、長らく利用していたproxysite.comがとうとうY・Y Netの規制の対象になりました。ということはYSFH Bypassを完成させて公開しても、結局しばらくしたら規制の対象になってしまうのではないかと考えた僕は、YSFH Bypassを会員制のWebサイトの裏に隠そうと考え、隠ぺい用のダミーサイト「YSFH cSINE」を作りました。その後、YSFH Bypassという名称をYSFH Accessに†悔い改めて†から、それをYSFH cSINEの中に隠してリリースしました。ついでに僕が1年生の頃に作ったAndroidアプリ「V2語録」とそのWeb版「V2 Online」を追加したのが今のYSFH cSINEです。</p>
+            </div>
+        </section>
 
     </body>
 </html>
