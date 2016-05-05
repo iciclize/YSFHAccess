@@ -50,7 +50,7 @@ app.use(cookieParser());
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
 app.get('/ysfhview', function (req, res) {
-    res.render('viewer', {title: 'NONE', host: 'http://localhost:3015/'});
+    res.render('viewer', {title: 'NONE', host: 'http://access.ysfh.black/'});
 });
 
 app.all('/*', function (req, res) {
