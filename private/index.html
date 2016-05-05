@@ -4,6 +4,7 @@
         <title>YSFH Access</title>
         <link rel="stylesheet" href="./index.css">
         <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css'>
+        <script src="./base64.min.js"></script>
     </head>
     <body>
         <div class="top">
@@ -13,26 +14,26 @@
             </div>
             <form class="urlform">
                 <input type="text" class="urlbar" placeholder="URL">
-                <button>Access</button>
+                <button onclick="location.href = location.protocol + '//' + location.host + '/' + Base64.encodeURI(document.querySelector('.urlbar').value); return false;">Access</button>
             </form>
             <ul class="links">
                 <li>
-                    <a class="youtube-b">
-                        <i class="fa fa-youtube-play"></i><span>Youtube</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="twitter-b">
-                        <i class="fa fa-twitter"></i><span>Twitter</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="facebook-b">
+                    <a class="facebook-b" href="/aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tLw">
                         <i class="fa fa-facebook-official"></i><span>Facebook</span>
                     </a>
                 </li>
                 <li>
-                    <a class="google-b">
+                    <a class="twitter-b" href="/aHR0cHM6Ly90d2l0dGVyLmNvbS8">
+                        <i class="fa fa-twitter"></i><span>Twitter</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="youtube-b" href="/aHR0cHM6Ly93d3cueW91dHViZS5jb20v">
+                        <i class="fa fa-youtube-play"></i><span>Youtube</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="google-b" href="/aHR0cHM6Ly93d3cuZ29vZ2xlLmNvLmpwLw">
                         <i class="fa fa-google"></i><span>Google</span>
                     </a>
                 </li>
@@ -101,6 +102,17 @@
                         <a href="/aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL0ljZVNvZnRpY29uMzB0aA"><i class="fa fa-facebook-official"></i> IceSofticon30th</a>
                     </p>
                 </div>
+            </div>
+        </section>
+        
+        <section class="notice">
+            <div class="container">
+                <h1>注意事項</h1>
+                <ul>
+                    <li>ページ内のJavaScriptにより動的に発生した通信(Ajaxリクエストやリソース読み込み)については正しく中継できないことがあります。</li>
+                    <li>Flashにより発生した通信を中継することは技術的に不可能なため、追加での通信が必要なフラッシュゲームなどはできません。</li>
+                    <li>当アプリケーションを利用することで発生したいかなる損害についても開発者は責任を負いかねます。</li>
+                </ul>
             </div>
         </section>
 

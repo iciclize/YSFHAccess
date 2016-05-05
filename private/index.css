@@ -6,7 +6,14 @@ html, body, h1, h2, h3, h4, h5, div, article, p, section, form, ul, li, a, input
 }
 
 body {
-    background-color: hsl(205, 100%, 19%);
+    background: rgba(43,133,194,1);
+    background: -moz-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(43,133,194,1)), color-stop(100%, rgba(0,57,97,1)));
+    background: -webkit-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
+    background: -o-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
+    background: -ms-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
+    background: linear-gradient(to right, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b85c2', endColorstr='#003961', GradientType=1 );
     color: #666;
 }
 
@@ -93,7 +100,7 @@ section {
 
 .links {
     width: 640px;
-    margin: 0 auto;
+    margin: 32px auto 64px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -111,6 +118,7 @@ section {
     border-radius: 4px;
     padding: 6px 10px;
     color: white;
+    box-shadow: 2px 5px 10px -5px rgba(0, 0, 0, .3);
     font-size: 14px;
 }
 
@@ -155,7 +163,7 @@ section {
 
 .feature {
     line-height: 36px;
-    background-color: hsl(205, 100%, 79%);
+    background-color: hsl(204, 100%, 88%);
     padding: 36px 0;
 }
 

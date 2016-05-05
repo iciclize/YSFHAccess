@@ -11,12 +11,15 @@ var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
 var base64 = require('js-base64').Base64;
-var cookie = require('cookie');
+var cookie = require('tough-cookie');
 
 var HTMLCharset = require('html-charset');
 var HTMLUrlConverter = require('./HTMLUrlConverter.js');
 var CSSCharset = require('css-charset');
 var CSSUrlConverter = require('./CSSUrlConverter.js');
+
+var lookupReferer = require('./refererDictionary.js');
+var forwardURLOverride = require('./forwardURLOverride.js');
 
 var app = express();
 var sessionValidator = require('ysfhcsine-validator')({
@@ -30,13 +33,15 @@ var sessionValidator = require('ysfhcsine-validator')({
 });
 var cookieParser = require('cookie-parser');
 
-//app.use(cookieParser());
+app.use(cookieParser());
 //app.use(sessionValidator);
+
+app.use('/ysfhaccess', express.static(__dirname + '/private'));
 
 app.all('/*', function (req, res) {
     var forwardURLPrefix = 'http://' + req.headers.host + '/';
     var proxyURL = req.url.substr(1);
-	var forwardURL = getForwardURL(proxyURL, req, res);
+	var forwardURL = getForwardURL(proxyURL, req.headers.referer);
     
     if (forwardURL) {
         bypass(req, res, forwardURLPrefix, forwardURL);
@@ -49,37 +54,122 @@ app.all('/*', function (req, res) {
     
 });
 
-function getForwardURL(proxyURL, req) {
-    var query = req.query;
-    var referer = req.headers.referer;
+function getForwardURL(proxyURL, referer) {
     if (typeof proxyURL != 'string') return null;
     
+    var isRefererCorrected = false;
+    
     var forwardURL = (function () {
-        var forwardURL = proxyURL;
-        if (forwardURL.match(/\./g)) return forwardURL;
-        forwardURL = base64.decode(forwardURL);
-        if (URLValidator.isWebUri(forwardURL)) return forwardURL;
-        return proxyURL;
+        
+        var forwardPath = '';
+        var querystrings = '';
+        
+        /** 
+         * proxyURLを定義したパターンに当てはめることで、
+         * Base64エンコードされていないかつ不完全なURLのrefererを
+         * 訂正して正しく中継されるようにする
+         */
+        var correctReferer = lookupReferer(proxyURL);
+        if (correctReferer) {
+            referer = 'http://example.com/' + base64.encodeURI(correctReferer);
+            isRefererCorrected = true;
+            return proxyURL;
+        }
+        
+        /**
+         * URLに?が含まれていた場合、
+         * ?より後はクエリストリングなのでその部分はBase64デコードしない
+         */
+        var exclamationIndex = proxyURL.indexOf('?');
+        if (exclamationIndex == -1) {
+            forwardPath = proxyURL;            
+        } else {
+            forwardPath = proxyURL.substring(0, exclamationIndex);
+            querystrings = proxyURL.substr(exclamationIndex);
+        }
+        
+        /**
+         * Base64エンコードされたURLにドットが入り込むことは無いので、
+         * もしドットが含まれていた場合、
+         * それはBase64エンコードされていないURLだから、
+         * デコードせずにそのまま返す
+         */
+        if (forwardPath.match(/\./g)) return forwardPath + querystrings;
+        
+        return base64.decode(forwardPath) + querystrings;
     })();
     
-    var querystrings = qs.stringify(query);
-    forwardURL += (querystrings) ? '?' + querystrings : '';
+    if (!isRefererCorrected) {
+        /** 
+         * refererが訂正されていなかった場合、
+         * デコード済みのforwardURLで再びlookupRefererを実行して,
+         * refererを訂正する
+         */
+        var correctReferer = lookupReferer(forwardURL); 
+        if (correctReferer) referer =  'http://example.com/' + base64.encodeURI(correctReferer);
+    }
     
-    if (referer) {
-        if (forwardURL.substr(0, 4) != 'http') {
+    
+    /**
+     * 要求先のURLがhttpで始まっていない場合それはURLの一部だから、
+     * refererの情報を使って正しいURLに直す
+     */
+    if (forwardURL.substr(0, 4) != 'http') {
+        
+        if (referer) {
             var refererObject = url.parse(referer);
-            var refererURL = base64.decode(refererObject.pathname.substr(1)) + ((refererObject.query) ? '?' + refererObject.query : '');
+            var refererURL = base64.decode(refererObject.path.substr(1));
             refererObject = url.parse(refererURL);
             forwardURL = url.resolve(refererObject.protocol + '//' + refererObject.host, forwardURL);
         }
     }
-
+    
+    forwardURL = forwardURLOverride(forwardURL);
     if (URLValidator.isWebUri(forwardURL)) return forwardURL;
     
     return null;
 }
 
 function bypass(req, res, forwardURLPrefix, forwardURL) {
+    
+    var forwardURLObject = url.parse(forwardURL);
+    
+    if (req.cookies) {
+        req.headers.cookie = '';
+        for (var key in req.cookies) {
+            var value = req.cookies[key];
+            
+            if (key.substr(0, 4) === 'ysfh') {
+                var ysfhcookie = (function parseYSFHCookie(key) {
+                    var headerbody = key.substr(4);
+                    var lengths = headerbody.split('_');
+                    var domainlen = parseInt(lengths[0]);
+                    var pathlen = parseInt(lengths[1]);
+                    var namelen = parseInt(lengths[2]);
+                    var body = lengths.slice(3).reduce(function (a, b) {
+                        return a.toString() + '_' + b.toString();
+                    });
+                    
+                    var domain = body.substr(0, domainlen);
+                    var path = body.substr(domainlen, pathlen);
+                    var name = body.substr(domainlen + pathlen, namelen);
+                    
+                    return {
+                        domain: domain,
+                        path: path,
+                        name: name
+                    };
+                }(key));
+                
+                if (cookie.domainMatch(forwardURLObject.hostname, ysfhcookie.domain)) {
+                    req.headers.cookie += ysfhcookie.name + '=' + value + '; ';
+                }
+            } else {
+                req.headers.cookie += key + '=' + value + '; ';
+            }
+            
+        }
+    }
     
     var forward = request({ uri: forwardURL, gzip: true});
     
@@ -88,31 +178,54 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         res.setHeader('Content-Security-Policy', 'connect-src *');
     }
     
-    function headerOverride(response) {
+    function headerOverride(response, hostname) {
         for (var name in response.headers) {
             if (name.toLowerCase() == 'set-cookie') {
                 var cookies = response.headers['set-cookie'] || [];
                 cookies = cookies.map(function (item) {
                     
-                    var pair = item.substring(0, item.indexOf(';')); 
-                    var eq_idx = pair.indexOf('=');
-                    if (eq_idx < 0) return;
+                    /**
+                     * モジュール cookie の実装からコピーしてきた
+                     */
+                    var parsedCookie = (function parseCookie(item) {
+                            
+                        var pair = item.substring(0, item.indexOf(';')); 
+                        var eq_idx = pair.indexOf('=');
+                        if (eq_idx < 0) return;
 
-                    var key = pair.substr(0, eq_idx).trim();
-                    var val = pair.substr(++eq_idx, pair.length).trim();
-                    if ('"' == val[0]) val = val.slice(1, -1);
-                    val = decodeURIComponent(val);
+                        var key = pair.substr(0, eq_idx).trim();
+                        var val = pair.substr(++eq_idx, pair.length).trim();
+                        if ('"' == val[0]) val = val.slice(1, -1);
+                        
+                        return {key: key, value: val};
+                    }(item));
+                    
+                    var key = parsedCookie.key;
+                    var val = parsedCookie.value;
 
                     var c = cookie.parse(item);
-                    c.domain = HOST;
+                    
+                    c.domain = c.domain || forwardURLObject.hostname;
+                    c.path = c.path || '/';
+                    
+                    var modifiedCookieName =
+                        'ysfh{domainlen}_{pathlen}_{namelen}_{domain}{path}{name}'
+                        .replace('{domainlen}', c.domain.length)
+                        .replace('{pathlen}', c.path.length)
+                        .replace('{namelen}', key.length)
+                        .replace('{domain}', c.domain)
+                        .replace('{path}', c.path)
+                        .replace('{name}', key);
+                    
+                    c.key = modifiedCookieName;
+                    c.domain = hostname;
                     c.path = '/';
                     c.expires = null;
                     c.secure = false;
                     c.httpOnly = false;
-                    c.firstPartyOnly = false;
+                    c.hostOnly = false;
                     
-                    // TODO: keyに情報を持たせる
-                    return cookie.serialize(key, val, c);
+                    return c.cookieString();
                 });
                 res.setHeader('set-cookie', cookies);
             } else {
@@ -123,10 +236,12 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     
     forward.on('response', function (response) {
         
+        /**
+         * リダイレクトの場合、参照先のURLを書き換える
+         */
         if (response.statusCode >= 300
         && response.statusCode < 400
         && response.headers.location) {
-            console.log(JSON.stringify(response.headers));
             function convertToForwardURL(rawURL) {
                 var _forwardURLObject = url.parse(forwardURL);
                 if (URLValidator.isWebUri(rawURL)) return forwardURLPrefix + base64.encodeURI(rawURL);
@@ -135,6 +250,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
                 return forwardURLPrefix + base64.encodeURI(url.resolve(_forwardURLObject.href, rawURL));
             }
             response.headers.location = convertToForwardURL(response.headers.location);
+            res.status(response.statusCode);
         }
         
         if (res.headersSent) {
@@ -142,7 +258,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
             return;
         }
         
-        headerOverride(response);
+        headerOverride(response, req.hostname);
         allowAccess();
         
         var contentType = response.headers['content-type'] || '';
