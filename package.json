@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/IceSofticon30th/YSFHBypass",
   "dependencies": {
-    "cookie": "^0.2.3",
     "cookie-parser": "^1.4.1",
     "css-charset": "0.0.4",
+    "ect": "^0.5.9",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "html-charset": "0.0.8",

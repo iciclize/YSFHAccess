@@ -1,5 +1,12 @@
-var HOST = 'access.ysfh.black';
-HOST = 'localhost';
+
+/**
+ * access.js
+ * 
+ * TODO: Refererを、Refererのパスをデコードしたものに置き換える
+ */
+
+var ECT = require('ect');
+var ectRenderer = ECT({ watch: true, root: __dirname + '/private', ext : '.ect' });
 
 var express = require('express');
 var session = require('express-session');
@@ -20,8 +27,13 @@ var CSSUrlConverter = require('./CSSUrlConverter.js');
 
 var lookupReferer = require('./refererDictionary.js');
 var forwardURLOverride = require('./forwardURLOverride.js');
+var agentFilter = require('./agentFilter.js');
 
 var app = express();
+app.engine('ect', ectRenderer.render);
+app.set('views', __dirname + '/private');
+app.set('view engine', 'ect');
+
 var sessionValidator = require('ysfhcsine-validator')({
     noSession: function (req, res, next) {
         //res.redirect('http://csine.ysfh.black/login');
@@ -37,6 +49,9 @@ app.use(cookieParser());
 //app.use(sessionValidator);
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
+app.get('/ysfhview', function (req, res) {
+    res.render('viewer', {title: 'NONE', host: 'http://localhost:3015/'});
+});
 
 app.all('/*', function (req, res) {
     var forwardURLPrefix = 'http://' + req.headers.host + '/';
@@ -65,9 +80,9 @@ function getForwardURL(proxyURL, referer) {
         var querystrings = '';
         
         /** 
-         * proxyURLを定義したパターンに当てはめることで、
-         * Base64エンコードされていないかつ不完全なURLのrefererを
-         * 訂正して正しく中継されるようにする
+         * 定義したパターンにproxyURLを当てはめることで、
+         * Base64エンコードされていないかつ不完全なURLの、
+         * refererを訂正して正しく中継されるようにする
          */
         var correctReferer = lookupReferer(proxyURL);
         if (correctReferer) {
@@ -131,10 +146,10 @@ function getForwardURL(proxyURL, referer) {
 }
 
 function bypass(req, res, forwardURLPrefix, forwardURL) {
-    
     var forwardURLObject = url.parse(forwardURL);
     
-    if (req.cookies) {
+    function overrideClientCookie(req) {
+        if (!req.cookies) return;
         req.headers.cookie = '';
         for (var key in req.cookies) {
             var value = req.cookies[key];
@@ -171,7 +186,10 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         }
     }
     
+    overrideClientCookie(req);
+    //agentFilter(forwardURL, req.headers['user-agent']);
     var forward = request({ uri: forwardURL, gzip: true});
+    
     
     function allowAccess() {
         res.setHeader('Access-Control-Allow-Origin', '*');

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title><%= @title %> - YSFH Access</title>
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+            }
+            
+            #accessbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 64px;
+            }
+            
+            #view {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                bottom: 0;
+                height: calc(100% - 64px);
+            } 
+        </style>
+        <script src="/ysfhaccess/base64.min.js"></script>
+    </head>
+    
+    <body>
+        <div id="accessbar">
+             <form>
+                <input type="text" id="url"><button onclick="document.querySelector('#view').src = '<%- @host %>' + Base64.encodeURI(document.querySelector('#url').value); return false;">Access</button>
+            </form>
+        </div>
+        <iframe id="view">
+        </iframe>
+    </body>
+
+</html>
