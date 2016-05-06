@@ -9,10 +9,10 @@ function overrideXHR(forwardUrlPrefix) {
         'var proxied = window.XMLHttpRequest.prototype.open;' +
         'window.XMLHttpRequest.prototype.open = function() {' +
             'arguments[1] = new URL(arguments[1], location.href).href;' +
-            'if (arguments[1].substr(0, forwardUrlPrefix.length) == forwardUrlPrefix) ' +
+            'if (arguments[1].substr(0, forwardUrlPrefix.length) == forwardUrlPrefix) {' +
             'arguments[1] = forwardUrlPrefix + Base64.encodeURI(arguments[1].substr(forwardUrlPrefix.length));' +
-            'else ' +
-            'arguments[1] = forwardUrlPrefix + Base64.encodeURI(arguments[1]);' +
+            '} else {' +
+            'arguments[1] = forwardUrlPrefix + Base64.encodeURI(arguments[1]); }' +
             'console.log( arguments );' +
             'return proxied.apply(this, [].slice.call(arguments));' +
         '};' +
