@@ -6,14 +6,14 @@ html, body, h1, h2, h3, h4, h5, div, article, p, section, form, ul, li, a, input
 }
 
 body {
-    background: rgba(43,133,194,1);
-    background: -moz-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(43,133,194,1)), color-stop(100%, rgba(0,57,97,1)));
-    background: -webkit-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
-    background: -o-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
-    background: -ms-linear-gradient(left, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
-    background: linear-gradient(to right, rgba(43,133,194,1) 0%, rgba(0,57,97,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b85c2', endColorstr='#003961', GradientType=1 );
+    background: rgba(0,115,186,1);
+    background: -moz-linear-gradient(left, rgba(0,115,186,1) 0%, rgba(8,70,114,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,115,186,1)), color-stop(100%, rgba(8,70,114,1)));
+    background: -webkit-linear-gradient(left, rgba(0,115,186,1) 0%, rgba(8,70,114,1) 100%);
+    background: -o-linear-gradient(left, rgba(0,115,186,1) 0%, rgba(8,70,114,1) 100%);
+    background: -ms-linear-gradient(left, rgba(0,115,186,1) 0%, rgba(8,70,114,1) 100%);
+    background: linear-gradient(to right, rgba(0,115,186,1) 0%, rgba(8,70,114,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0073ba', endColorstr='#084672', GradientType=1 );
     color: #666;
 }
 
@@ -56,15 +56,12 @@ section {
 }
 
 .logo p {
-    padding: 12px 0;
-    color: hsl(210, 100%, 77%);
-}
-
-.copy {
     margin-top: 20px;
     font-size: 18px;
     text-align: center;
     color: white;
+    padding: 12px 0;
+    color: hsl(210, 100%, 92%);
 }
 
 .urlform {
@@ -89,7 +86,7 @@ section {
     right: 0;
     bottom: 0;
     width: 100px;
-    background-color: hsl(324, 100%, 50%);
+    background-color: hsl(327, 100%, 70%);
     color: white;
     border: none;
     border-top-right-radius: 4px;
@@ -175,8 +172,8 @@ section {
     list-style: none;
     margin: 12px auto;
     padding: 2px 0 2px 1em;
-    background-color: hsl(205, 100%, 91%);
-    border-left: 5px solid hsl(324, 100%, 61%);
+    background-color: hsla(205,100%,96%,1);
+    border-left: 4px solid hsl(324, 100%, 61%);
 }
 
 .feature li {
@@ -266,11 +263,42 @@ section {
 }
 
 /*
+*    secure
+*/
+
+.secure {
+    background-color: hsl(203, 98%, 34%);
+    color: white;
+    overflow: hidden;
+}
+
+.secure h1 {
+    color: white;
+}
+
+.secure .fa-lock {
+    width: 210px;
+    height: 324px;
+    color: hsl(55, 100%, 50%);
+    font-size: 324px;
+    text-shadow: 4px 6px 3px hsla(0, 0%, 0%, 0.23);
+}
+
+.secure .lock {
+    float: left;
+}
+
+.secure article {
+    margin-top: 90px;
+    margin-left: 250px;
+}
+
+/*
 *    .guide
 */
 
 .guide {
-
+    background-color: white;
 }
 
 .guide .container {
@@ -328,11 +356,21 @@ section {
 }
 
 /*
+*    .notice
+*/
+
+.notice {
+    background-color: hsl(327, 100%, 84%);
+    color: hsl(327, 100%, 26%);
+}
+
+
+/*
 *    .history
 */
 
 .history {
-    background-color: aliceblue;
+    background-color: white;
 }
 
 .history .container {

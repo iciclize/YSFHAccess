@@ -65,12 +65,12 @@
                     <li class="youtube">
                         <div class="fa youtube">&#xf16a;</div>
                         <h2>Youtube</h2>
-                        <p>Youtubeの動画の視聴に対応。話題の動画を探したり、お気に入りの動画をチェックしたりしよう。</p>
+                        <p>Youtubeの動画の視聴に対応。話題の動画を探したり、お気に入りの動画をチェックしたりしよう(提案)</p>
                     </li>
                     <li class="twitter">
                         <div class="fa twitter">&#xf099;</div>
                         <h2>Twitter</h2>
-                        <p>Twitter(モバイル版)に対応。今起きていることを見つけて、みんなの話題を知ろう。</p>
+                        <p>Twitterに対応。今起きていることを見つけて、みんなの話題を知って、どうぞ。</p>
                     </li>
                     <li class="facebook">
                         <div class="fa facebook">&#xf230;</div>
@@ -81,11 +81,34 @@
             </div>
         </section>
 
+        <section class="secure">
+            <div class="container">
+                <h1>セキュアな通信</h1>
+                <div class="lock"><i class="fa fa-lock" ></i></div>
+                <article>
+                    <p>TLS（Transport Layer Security）により通信が暗号化されるため安全にWebサイトを閲覧することができます。また、Y・Y Netは、YSFH Accessを使ってどのサイトを閲覧したかを判別することができないため、あなたの閲覧履歴がY・Y Netに残ることはないってはっきり分かんだね。</p>
+                </article>
+            </div>
+        </section>
+
         <section class="guide">
             <div class="container">
-                <h1></h1>
-                <p>URLバーに、アクセスしたいサイトのアドレスを入力して、Accessボタンを押してください。または、利用したいサービスのボタンを押してください。</p>
-                <p>Javascriptの有効・無効を切り替えるスイッチ。ページが上手く表示されない時は、有効・無効を切り替えてから[Access]を押して再度ページを読み込んでみてください。</p>
+                <h1>ガイド</h1>
+                <ul>
+                    <li>ページが上手く表示できない・動かない場合はJavaScriptをオフにしてみてください。</li>
+                    <li>Google画像検索については、YSFH Accessを使わなくとも、URLのhttp:の部分をhttps:に置き換えるだけで接続できます。</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="notice">
+            <div class="container">
+                <h1>注意事項</h1>
+                <ul>
+                    <li>ページ内のJavaScriptにより動的に発生した通信(Ajaxリクエストやリソース読み込み)については正しく中継できないことがあります。</li>
+                    <li>Flashにより発生した通信を中継することは技術的に不可能なため、追加での通信が必要なフラッシュゲームなどはできません。</li>
+                    <li>当アプリケーションを利用することで発生したいかなる損害についても開発者は責任を負いかねます。</li>
+                </ul>
             </div>
         </section>
 
@@ -104,25 +127,14 @@
                 </div>
             </div>
         </section>
-        
-        <section class="notice">
-            <div class="container">
-                <h1>注意事項</h1>
-                <ul>
-                    <li>ページ内のJavaScriptにより動的に発生した通信(Ajaxリクエストやリソース読み込み)については正しく中継できないことがあります。</li>
-                    <li>Flashにより発生した通信を中継することは技術的に不可能なため、追加での通信が必要なフラッシュゲームなどはできません。</li>
-                    <li>当アプリケーションを利用することで発生したいかなる損害についても開発者は責任を負いかねます。</li>
-                </ul>
-            </div>
-        </section>
 
         <section class="history">
             <div class="container">
-                <h1>完成までの経緯</h1>
+                <h1>開発の経緯</h1>
                 <div class="episodes">
                     <article>
                         <h2>Proxysite.comもどきを作ろう</h2>
-                        <p>サイエンスリテラシーやOCPDの授業などで度々必要になるインターネット。ところが、閲覧しようとしたページが規制されずに閲覧できることは珍しいものです。そんな規制を逃れるための手段としてproxysite.comを使うのが一般的でした。proxysite.comとはいわゆるWebプロキシサイトの一つで、Webサイトへのアクセスを代行することであらゆるサイトを閲覧可能にするサービスです。proxysite.comはYoutubeやTwitterなどの主要なSNSの閲覧に対応しています。しかしproxysite.comにはセキュリティ上、同じ場所から頻繁にアクセスすると、しばらくの間アクセスが制限されるという特徴がありました。そのため、同じIPアドレスを共有する学校で、何人かがproxysite.comを利用しアクセス回数が制限値まで到達してしまうと、他の生徒も利用できなくなってしまうことがありました。そこで、2016年2月6日、proxysite.comに似たようなものを作ろうと思い立ち、YSFH Bypassという名前でプロジェクトを始めました。</p>
+                        <p>サイエンスリテラシーやOCPDの授業などで度々必要になるインターネット。ところが、閲覧しようとしたページが規制されずに閲覧できることは珍しいものです。そんな規制を逃れるための手段としてproxysite.comを使うのが一般的でした。proxysite.comとはいわゆるWebプロキシサイトの一つで、Webサイトへのアクセスを代行することであらゆるサイトを閲覧可能にするサービスです。proxysite.comはYoutubeやTwitterなどの主要なSNSの閲覧に対応しています。しかしproxysite.comにはセキュリティ上、同じ場所から頻繁にアクセスすると、しばらくの間アクセスが制限されるという特徴がありました。そのため、同じIPアドレスを共有する学校で、何人かがproxysite.comを利用しアクセス回数が制限値まで到達してしまうと、他の生徒も利用できなくなってしまうことがありました。そこで、2016年2月6日、proxysite.comのような便利なものを作ろうと思い立ち、YSFH Bypassという名前でプロジェクトを始めました。</p>
                     </article>
                     <article>
                         <h2>Proxysite.com、規制の対象に</h2>
