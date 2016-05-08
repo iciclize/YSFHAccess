@@ -36,4 +36,4 @@ node_modules
 private/access.png
 private/favicon.png
 public/favicon.png
-sslcertificate
+ssl-cert

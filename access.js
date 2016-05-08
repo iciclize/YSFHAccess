@@ -3,12 +3,12 @@
  * access.js
  */
 
+var ECT = require('ect');
+var ectRenderer = ECT({ watch: true, root: __dirname + '/private', ext : '.ect' });
 
 var express = require('express');
 var session = require('express-session');
 
-var https = require('https');
-var fs = require('fs');
 var url = require('url');
 var path = require('path');
 var qs = require('querystring');
@@ -18,9 +18,6 @@ var URLValidator = require('valid-url');
 var base64 = require('js-base64').Base64;
 var cookie = require('tough-cookie');
 
-var ECT = require('ect');
-var ectRenderer = ECT({ watch: true, root: __dirname + '/private', ext : '.ect' });
-
 var HTMLCharset = require('html-charset');
 var HTMLUrlConverter = require('./HTMLUrlConverter.js');
 var CSSCharset = require('css-charset');
@@ -29,11 +26,13 @@ var CSSUrlConverter = require('./CSSUrlConverter.js');
 var lookupReferer = require('./refererDictionary.js');
 var forwardURLOverride = require('./forwardURLOverride.js');
 
-var cSINEValidator = require('ysfhcsine-validator');
 
 var app = express();
+app.engine('ect', ectRenderer.render);
+app.set('views', __dirname + '/private');
+app.set('view engine', 'ect');
 
-var sessionValidator = cSINEValidator({
+var sessionValidator = require('ysfhcsine-validator')({
     noSession: function (req, res, next) {
         //res.redirect('http://csine.ysfh.black/login');
         next();
@@ -42,27 +41,14 @@ var sessionValidator = cSINEValidator({
         
     }*/
 });
-
 var cookieParser = require('cookie-parser');
-
-var server = https.createServer({
-    //passphrase: [ここにパスフレーズを入力]
-    key: fs.readFileSync('./sslcertificate/ysfhaccess.key'),
-    cert: fs.readFileSync('./sslcertificate/ysfhaccess.crt')
-}, app);
-
-
-app.set('port', process.env.PORT || 3015);
-app.engine('ect', ectRenderer.render);
-app.set('views', __dirname + '/private');
-app.set('view engine', 'ect');
 
 app.use(cookieParser());
 //app.use(sessionValidator);
 
 app.get('/favicon.ico', function (req, res) {
     res.sendFile(__dirname + '/public/favicon.ico');
-});
+})
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
 app.get('/ysfhview', function (req, res) {
@@ -356,4 +342,4 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     req.pipe(forward);
 }
 
-server.listen(app.get('port'));
+app.listen(3015);
