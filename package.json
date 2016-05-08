@@ -1,6 +1,7 @@
 {
   "name": "YSFHAccess",
   "version": "1.0.0",
+  "private": true,
   "description": "A web proxy.",
   "main": "access.js",
   "scripts": {

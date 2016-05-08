@@ -1,16 +1,14 @@
 
 /**
  * access.js
- * 
- * TODO: Refererを、Refererのパスをデコードしたものに置き換える
  */
 
-var ECT = require('ect');
-var ectRenderer = ECT({ watch: true, root: __dirname + '/private', ext : '.ect' });
 
 var express = require('express');
 var session = require('express-session');
 
+var https = require('https');
+var fs = require('fs');
 var url = require('url');
 var path = require('path');
 var qs = require('querystring');
@@ -20,6 +18,9 @@ var URLValidator = require('valid-url');
 var base64 = require('js-base64').Base64;
 var cookie = require('tough-cookie');
 
+var ECT = require('ect');
+var ectRenderer = ECT({ watch: true, root: __dirname + '/private', ext : '.ect' });
+
 var HTMLCharset = require('html-charset');
 var HTMLUrlConverter = require('./HTMLUrlConverter.js');
 var CSSCharset = require('css-charset');
@@ -27,14 +28,12 @@ var CSSUrlConverter = require('./CSSUrlConverter.js');
 
 var lookupReferer = require('./refererDictionary.js');
 var forwardURLOverride = require('./forwardURLOverride.js');
-var agentFilter = require('./agentFilter.js');
+
+var cSINEValidator = require('ysfhcsine-validator');
 
 var app = express();
-app.engine('ect', ectRenderer.render);
-app.set('views', __dirname + '/private');
-app.set('view engine', 'ect');
 
-var sessionValidator = require('ysfhcsine-validator')({
+var sessionValidator = cSINEValidator({
     noSession: function (req, res, next) {
         //res.redirect('http://csine.ysfh.black/login');
         next();
@@ -43,10 +42,27 @@ var sessionValidator = require('ysfhcsine-validator')({
         
     }*/
 });
+
 var cookieParser = require('cookie-parser');
+
+var server = https.createServer({
+    //passphrase: [ここにパスフレーズを入力]
+    key: fs.readFileSync('./sslcertificate/ysfhaccess.key'),
+    cert: fs.readFileSync('./sslcertificate/ysfhaccess.crt')
+}, app);
+
+
+app.set('port', process.env.PORT || 3015);
+app.engine('ect', ectRenderer.render);
+app.set('views', __dirname + '/private');
+app.set('view engine', 'ect');
 
 app.use(cookieParser());
 //app.use(sessionValidator);
+
+app.get('/favicon.ico', function (req, res) {
+    res.sendFile(__dirname + '/public/favicon.ico');
+});
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
 app.get('/ysfhview', function (req, res) {
@@ -186,8 +202,36 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         }
     }
     
+    function overrideReferer(req) {
+        if (!req.headers.referer) return;
+        var refererObject = url.parse(req.headers.referer);
+        refererObject.search = (refererObject.search) ? refererObject.search : '' ; 
+        req.headers.referer = base64.decode(refererObject.pathname.substr(1)) + refererObject.search;
+    }
+    
+    /**
+     * originヘッダをrefererヘッダのホストで上書きする
+     */
+    function overrideOrigin(req) {
+        if (!req.headers.origin) return;
+        if (!req.headers.referer) return;
+        // リファラが正しい物に上書きされていることが前提
+        var originURLObject = url.parse(req.headers.referer);
+        req.headers.origin = originURLObject.protocol + '//' + originURLObject.host;
+    }
+    
+    function noChace(req) {
+        req.headers['Cache-Control'] = 'no-cache';
+    }
+    
+    /**
+     * ヘッダ上書きの順番に注意すること
+     */
     overrideClientCookie(req);
-    //agentFilter(forwardURL, req.headers['user-agent']);
+    overrideReferer(req);
+    overrideOrigin(req);
+    noChace(req);
+    
     var forward = request({ uri: forwardURL, gzip: true});
     
     
@@ -312,4 +356,4 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     req.pipe(forward);
 }
 
-app.listen(3015);
+server.listen(app.get('port'));

@@ -15,6 +15,7 @@ body {
     background: linear-gradient(to right, rgba(0,115,186,1) 0%, rgba(8,70,114,1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0073ba', endColorstr='#084672', GradientType=1 );
     color: #666;
+    font-family:Avenir , "Open Sans" , "Helvetica Neue" , Helvetica , Arial , Verdana , Roboto , "游ゴシック" , "Yu Gothic" , "游ゴシック体" , "YuGothic" , "ヒラギノ角ゴ Pro W3" , "Hiragino Kaku Gothic Pro" , "Meiryo UI" , "メイリオ" , Meiryo , "ＭＳ Ｐゴシック" , "MS PGothic" , sans-serif;
 }
 
 a {
@@ -40,6 +41,9 @@ section {
     font-size: 18px;
 }
 
+ul li {
+    margin-bottom: 6px;
+}
 
 .top {
     padding: 40px 0;
@@ -391,4 +395,13 @@ section {
 .history h2 {
     margin-bottom: 12px;
     font-size: 28px;
+}
+
+
+footer {
+    padding: 8px 20px;
+}
+
+footer img {
+    height: 42px;
 }

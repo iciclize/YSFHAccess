@@ -65,17 +65,17 @@
                     <li class="youtube">
                         <div class="fa youtube">&#xf16a;</div>
                         <h2>Youtube</h2>
-                        <p>Youtubeの動画の視聴に対応。話題の動画を探したり、お気に入りの動画をチェックしたりしよう(提案)</p>
+                        <p>Youtubeの動画の視聴に対応。話題の動画を探したり、お気に入りの動画をチェックしたり、しよう(提案)</p>
                     </li>
                     <li class="twitter">
                         <div class="fa twitter">&#xf099;</div>
                         <h2>Twitter</h2>
-                        <p>Twitterに対応。今起きていることを見つけて、みんなの話題を知って、どうぞ。</p>
+                        <p>Twitterに対応。今起きていることを見つけて、クサイエンスフロンティアのみんなのくっさい話題を知って、どうぞ</p>
                     </li>
                     <li class="facebook">
                         <div class="fa facebook">&#xf230;</div>
                         <h2>Facebook</h2>
-                        <p>Facebook(モバイル版)に対応。学校や海外の友達とのつながりを深めよう。</p>
+                        <p>Facebookに対応。学校や海外の友達とのつながりを深められる可能性が微粒子レベルで存在している…?</p>
                     </li>
                 </ul>
             </div>
@@ -86,7 +86,7 @@
                 <h1>セキュアな通信</h1>
                 <div class="lock"><i class="fa fa-lock" ></i></div>
                 <article>
-                    <p>TLS（Transport Layer Security）により通信が暗号化されるため安全にWebサイトを閲覧することができます。また、Y・Y Netは、YSFH Accessを使ってどのサイトを閲覧したかを判別することができないため、あなたの閲覧履歴がY・Y Netに残ることはないってはっきり分かんだね。</p>
+                    <p>TLS（Transport Layer Security）により通信が暗号化されるため安全にWebサイトを閲覧することができます。またこの暗号化により、Y・Y Netは、YSFH Accessを使ってどのサイトを閲覧したかを判別することができなくなるため、あなたの閲覧履歴はY・Y Netのログに残りません。やったぜ。</p>
                 </article>
             </div>
         </section>
@@ -97,6 +97,7 @@
                 <ul>
                     <li>ページが上手く表示できない・動かない場合はJavaScriptをオフにしてみてください。</li>
                     <li>Google画像検索については、YSFH Accessを使わなくとも、URLのhttp:の部分をhttps:に置き換えるだけで接続できます。</li>
+                    <li>ニコニコ動画は2016年5月現在規制されていないため、YSFH Accessを介さずにご覧ください。</li>
                 </ul>
             </div>
         </section>
@@ -105,6 +106,7 @@
             <div class="container">
                 <h1>注意事項</h1>
                 <ul>
+                    <li>あるサイトへログインできない現象が複数回連続で発生した場合、そのサイトへのログインは諦めてください。技術的な問題によりログインが不可能な場合があります。ログインに失敗し続けるとそのアカウントが凍結される恐れがあります。</li>
                     <li>ページ内のJavaScriptにより動的に発生した通信(Ajaxリクエストやリソース読み込み)については正しく中継できないことがあります。</li>
                     <li>Flashにより発生した通信を中継することは技術的に不可能なため、追加での通信が必要なフラッシュゲームなどはできません。</li>
                     <li>当アプリケーションを利用することで発生したいかなる損害についても開発者は責任を負いかねます。</li>
@@ -134,16 +136,20 @@
                 <div class="episodes">
                     <article>
                         <h2>Proxysite.comもどきを作ろう</h2>
-                        <p>サイエンスリテラシーやOCPDの授業などで度々必要になるインターネット。ところが、閲覧しようとしたページが規制されずに閲覧できることは珍しいものです。そんな規制を逃れるための手段としてproxysite.comを使うのが一般的でした。proxysite.comとはいわゆるWebプロキシサイトの一つで、Webサイトへのアクセスを代行することであらゆるサイトを閲覧可能にするサービスです。proxysite.comはYoutubeやTwitterなどの主要なSNSの閲覧に対応しています。しかしproxysite.comにはセキュリティ上、同じ場所から頻繁にアクセスすると、しばらくの間アクセスが制限されるという特徴がありました。そのため、同じIPアドレスを共有する学校で、何人かがproxysite.comを利用しアクセス回数が制限値まで到達してしまうと、他の生徒も利用できなくなってしまうことがありました。そこで、2016年2月6日、proxysite.comのような便利なものを作ろうと思い立ち、YSFH Bypassという名前でプロジェクトを始めました。</p>
+                        <p>サイエンスリテラシーやOCPDの授業などで度々必要になるインターネット。ところが、閲覧しようとしたページが規制されずに閲覧できることは珍しいものです。そんな規制を逃れるための手段としてproxysite.comを使うのが一般的でした。proxysite.comとはいわゆるWebプロキシサイトの一つで、Webサイトへのアクセスを代行することであらゆるサイトを閲覧可能にするサービスです。proxysite.comはYoutubeやTwitterなどの主要なSNSの閲覧に対応しています。しかしproxysite.comにはセキュリティ上、同じ場所から頻繁にアクセスすると、しばらくの間アクセスが制限されるという特徴がありました。そのため、同じIPアドレスを共有する学校で、何人かがproxysite.comを利用し、その利用回数が制限値まで到達してしまうと、proxysite.comは学校からのアクセスを拒否するようになり、誰も利用できなくなってしまうことがありました。そこで、生徒全員がアクセス回数の制限なしでWebサイトを閲覧できるようにするため、2016年2月6日、proxysite.comのコピーを自作しようと思い立ち、YSFH Bypassという名前でプロジェクトを始めました。</p>
                     </article>
                     <article>
                         <h2>Proxysite.com、規制の対象に</h2>
-                        <p>YSFH Bypassの製作開始からおよそ1ヶ月が経ち、YSFH Bypassの開発環境の上でYoutubeの動画を視聴する実験に成功しました。そこで学校のPCで視聴テストをした結果、見事にYoutubeの閲覧に成功しました。</p>
+                        <p>YSFH Bypassの製作開始からおよそ1ヶ月が経ち、学校でYoutubeの動画を視聴する実験に成功しました。</p>
                         <p>それから数日が経ったころ、proxysite.comがとうとうY・Y Netの規制の対象になりました。</p>
-                        <p>長い間利用していたproxysite.comが規制されたことに衝撃を受けた僕は、YSFH Bypassを完成させて公開しても、結局しばらくしたら規制の対象になってしまうのではないかと考えました。そこで、YSFH Bypassを会員制のWebサイトの裏に隠そうと考え、隠ぺい用のダミーサイト「YSFH cSINE」を作りました。その後、YSFH Bypassという名称をYSFH Accessに†悔い改めて†から、YSFH AccessをYSFH cSINEの中に隠してリリースしました。ついでに僕が1年生の頃に作ったAndroidアプリ「V2語録」とそのWeb版「V2 Online」を追加したのが今のYSFH cSINEです。</p>
+                        <p>長い間利用していたproxysite.comが規制されたことに衝撃を受けた僕は、YSFH Bypassを完成させて公開しても、結局しばらくしたらY・Y NetのUNEIにバレて規制の対象になってしまうのではないかと考えました。そこで、YSFH Bypassを会員制のWebサイトの裏に隠そうと考え、隠ぺい用のダミーサイト「YSFH cSINE」を作りました。その後、YSFH Bypassという名称をYSFH Accessに†悔い改めて†から、YSFH AccessをYSFH cSINEの中に隠してリリースしました。ついでに僕が1年生の頃に作ったAndroidアプリ「V2語録」とそのWeb版「V2 Online」を追加したのが今のYSFH cSINEです。</p>
                     </article>
                 </div>
             </div>
         </section>
+
+        <footer>
+            <img src="./access.svg">
+        </footer>
     </body>
 </html>
