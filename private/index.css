@@ -302,7 +302,7 @@ ul li {
 */
 
 .guide {
-    background-color: white;
+    background-color: rgb(215, 239, 255);
 }
 
 .guide .container {
@@ -403,5 +403,5 @@ footer {
 }
 
 footer img {
-    height: 42px;
+    height: 32px;
 }
