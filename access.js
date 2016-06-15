@@ -342,4 +342,6 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     req.pipe(forward);
 }
 
-app.listen(3015);
+app.listen(3015, function () {
+	console.log('YSFH Access is listening on port 3015.')
+});
