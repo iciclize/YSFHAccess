@@ -322,15 +322,13 @@ ul li {
 
 .developer img {
     display: inline-block;
-    width: 128px;
-    height: 128px;
+    width: 72px;
+    height: 72px;
 }
 
 .developer .profile {
-    position: relative;
     display: inline-block;
     margin-left: 32px;
-    height: 128px;
     vertical-align: top;
 }
 
@@ -345,10 +343,8 @@ ul li {
 }
 
 .developer .accounts {
-    font-size: 14px;
-    line-height: 18px;
-    position: absolute;
-    bottom: 0;
+    font-size: 18px;
+    line-height: 24px;
 }
 
 .developer .accounts a {

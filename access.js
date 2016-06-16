@@ -51,8 +51,8 @@ app.get('/favicon.ico', function (req, res) {
 })
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
-app.get('/ysfhview', function (req, res) {
-    res.render('viewer', {title: 'NONE', host: 'http://access.ysfh.black/'});
+app.use('/ysfhview', function (req, res, next) {
+    res.render('viewer', {title: 'NONE', url: req.url});
 });
 
 app.all('/*', function (req, res) {
@@ -64,8 +64,9 @@ app.all('/*', function (req, res) {
         bypass(req, res, forwardURLPrefix, forwardURL);
     } else {
         if (!res.headersSent) {
+            res.setHeader('Content-Type', 'text/html; charset=UTF-8');
             res.writeHead(404);
-            res.end('114514');
+            res.end('<img src="/ysfhaccess/access.svg"><h1>URLがダメみたいですね…</h1>');
         }
     }
     
@@ -207,6 +208,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     }
     
     function noChace(req) {
+        req.headers['Pragma'] = 'no-cache';
         req.headers['Cache-Control'] = 'no-cache';
     }
     
@@ -337,6 +339,9 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     
     forward.on('error', function (err) {
         console.log(err);
+        res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+        res.write('<h1>URLがちょっと歯当たんよ〜</h1>');
+        res.end('<pre>' + err.stack + '</pre>');
     });
     
     req.pipe(forward);
