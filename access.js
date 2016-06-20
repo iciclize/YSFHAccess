@@ -74,7 +74,7 @@ app.all('/*', function (req, res) {
 
 function getForwardURL(proxyURL, referer) {
     if (typeof proxyURL != 'string') return null;
-    referer = referer.replace('/ysfhaccess', '');
+    referer = referer.replace('/ysfhview', '');
 
     var isRefererCorrected = false;
     
