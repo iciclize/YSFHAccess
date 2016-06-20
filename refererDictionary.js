@@ -21,7 +21,7 @@ var REFERER_STORE = [
         [
             'intern/common/referer_frame.php'
         ],
-        'https://www.facebook.com/'
+        'https://s-static.ak.facebook.com/'
     ]
 ];
 
