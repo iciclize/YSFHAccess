@@ -17,6 +17,12 @@ var REFERER_STORE = [
         ],
         'https://www.google.co.jp/'
     ],
+    [
+        [
+            'intern/common/referer_frame.php'
+        ],
+        'https://www.facebook.com/'
+    ]
 ];
 
 
