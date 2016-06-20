@@ -74,7 +74,7 @@ app.all('/*', function (req, res) {
 
 function getForwardURL(proxyURL, referer) {
     if (typeof proxyURL != 'string') return null;
-    referer = referer.replace('/ysfhview', '');
+    if (referer) referer = referer.replace('/ysfhview', '').replace('/ysfhaccess', '');
 
     var isRefererCorrected = false;
     
@@ -192,7 +192,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     
     function overrideReferer(req) {
         if (!req.headers.referer) return;
-        req.headers.referer = req.headers.referer.replace('/ysfhview', '');
+        req.headers.referer = req.headers.referer.replace('/ysfhview', '').replace('/ysfhaccess', '');
         var refererObject = url.parse(req.headers.referer);
         refererObject.search = (refererObject.search) ? refererObject.search : '' ; 
         req.headers.referer = base64.decode(refererObject.pathname.substr(1)) + refererObject.search;
