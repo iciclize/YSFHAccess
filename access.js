@@ -192,6 +192,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     
     function overrideReferer(req) {
         if (!req.headers.referer) return;
+        req.headers.referer = req.headers.referer.replace('/ysfhview', '');
         var refererObject = url.parse(req.headers.referer);
         refererObject.search = (refererObject.search) ? refererObject.search : '' ; 
         req.headers.referer = base64.decode(refererObject.pathname.substr(1)) + refererObject.search;
