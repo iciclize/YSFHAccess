@@ -52,7 +52,7 @@ app.get('/favicon.ico', function (req, res) {
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
 app.get('/ysfhview/*', function (req, res, next) {
-    res.render('viewer', {title: 'NONE', url: req.url.substr('/ysfhview'.length)});
+    res.render('viewer', {title: 'NONE', url: '/' + req.url.substr('/ysfhview'.length)});
 });
 
 app.all('/*', function (req, res) {
@@ -143,7 +143,7 @@ function getForwardURL(proxyURL, referer) {
     }
     
     forwardURL = forwardURLOverride(forwardURL);
-    if (URLValidator.isWebUri(forwardURL)) return '/' + forwardURL;
+    if (URLValidator.isWebUri(forwardURL)) return forwardURL;
     
     return null;
 }
