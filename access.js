@@ -51,8 +51,8 @@ app.get('/favicon.ico', function (req, res) {
 })
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
-app.use('/ysfhview', function (req, res, next) {
-    res.render('viewer', {title: 'NONE', url: req.url});
+app.get('/ysfhview/*', function (req, res, next) {
+    res.render('viewer', {title: 'NONE', url: req.url.substr('/ysfhview'.length)});
 });
 
 app.all('/*', function (req, res) {
