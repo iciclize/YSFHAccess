@@ -93,8 +93,12 @@
     
     <body>
         <script>
-            function overwriteTitle(doc) {
+            function jumped(doc) {
                 document.title = doc.contentWindow.document.title + ' - YSFH Access';
+                var b64ed = doc.contentWindow.location.pathname.substr(1);
+                var search = doc.contentWindow.location.search;
+                var viewURL = Base64.decode(b64ed) + search;
+                document.getElementById('url').value = viewURL;
             }
         </script>
         <div id="accessbar">
@@ -103,7 +107,7 @@
                 <input type="text" id="url" placeholder="http://..."><button onclick="document.querySelector('#view').src = location.origin + '/' + Base64.encodeURI(document.querySelector('#url').value); return false;">Access</button>
             </form>
         </div>
-        <iframe id="view" src="<%= @url %>" onload="overwriteTitle(this)">
+        <iframe id="view" src="<%= @url %>" onload="jumped(this)">
         </iframe>
     </body>
 

@@ -16,9 +16,9 @@ function URLConverter(forwardURLPrefix, forwardURL) {
         headStream.on('data', function (data) {
             if (first) {
                 headStream.write('<script>'
+                    + clientCodes.urlResolver()
                     + clientCodes.overrideXHR(forwardURLPrefix)
                     + clientCodes.base64URLEncoder()
-                    + clientCodes.defineSetter()
                     + '</script>\n'
                     + data);
                 first = false;

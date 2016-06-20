@@ -226,6 +226,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     function allowAccess() {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Security-Policy', 'connect-src *');
+        res.removeHeader('X-Frame-Options');
     }
     
     function headerOverride(response, hostname) {
