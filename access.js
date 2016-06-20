@@ -74,7 +74,6 @@ app.all('/*', function (req, res) {
 
 function getForwardURL(proxyURL, referer) {
     if (typeof proxyURL != 'string') return null;
-    if (proxyURL.substr(0, 9) == '/ysfhview') proxyURL = proxyURL.substr(9);
     
     var isRefererCorrected = false;
     
@@ -144,7 +143,7 @@ function getForwardURL(proxyURL, referer) {
     }
     
     forwardURL = forwardURLOverride(forwardURL);
-    if (URLValidator.isWebUri(forwardURL)) return forwardURL;
+    if (URLValidator.isWebUri(forwardURL)) return '/' + forwardURL;
     
     return null;
 }
