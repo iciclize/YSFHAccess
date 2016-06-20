@@ -43,7 +43,7 @@ var sessionValidator = require('ysfhcsine-validator')({
 var cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
-//app.use(sessionValidator);
+app.use(sessionValidator);
 
 app.get('/favicon.ico', function (req, res) {
     res.sendFile(__dirname + '/public/favicon.ico');
