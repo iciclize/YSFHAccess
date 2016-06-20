@@ -34,12 +34,11 @@ app.set('view engine', 'ect');
 
 var sessionValidator = require('ysfhcsine-validator')({
     noSession: function (req, res, next) {
-        //res.redirect('http://csine.ysfh.black/login');
-        next();
+        res.redirect('http://ysfh.black/login/');
     },
-    /*invalidSession: function (req, res, next) {
-        
-    }*/
+    invalidSession: function (req, res, next) {
+        res.redirect('http://ysfh.black/login/');
+    }
 });
 var cookieParser = require('cookie-parser');
 
