@@ -105,6 +105,8 @@ ul li {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    color: white;
+    border-color: white;
 }
 
 .links li {
@@ -118,7 +120,6 @@ ul li {
     text-align: center;
     border-radius: 4px;
     padding: 6px 10px;
-    color: white;
     box-shadow: 2px 5px 10px -5px rgba(0, 0, 0, .3);
     font-size: 14px;
 }
@@ -131,7 +132,7 @@ ul li {
 
 .links .fa {
     font-size: 28px;
-    border-right: 1px solid white;
+    border-right: 1px solid;
     padding-right: 10px;
     margin-right: 10px;
 }
@@ -155,7 +156,9 @@ ul li {
 }
 
 .google-b {
-    background-color: #ea4335;
+    background-color: white;
+    color: hsl(217, 89%, 61%);
+    border-color: hsl(217, 89%, 61%);
 }
 
 /*
@@ -556,7 +559,6 @@ footer img {
         text-align: left;
         border-radius: 4px;
         padding: 6px 26px;
-        color: white;
         box-shadow: 2px 5px 10px -5px rgba(0, 0, 0, .3);
         font-size: 14px;
     }
@@ -567,34 +569,11 @@ footer img {
         top: -5px;
     }
 
-    .links .fa {
-        font-size: 28px;
-        border-right: 1px solid white;
-        padding-right: 10px;
-        margin-right: 10px;
-    }
-
     .links::after {
         content: '';
         visibility: hidden;
         clear: none;
         display: none;
-    }
-
-    .youtube-b {
-        background-color: #cd201f;
-    }
-
-    .twitter-b {
-        background-color: #55acee;
-    }
-
-    .facebook-b {
-        background-color: #315096;
-    }
-
-    .google-b {
-        background-color: #ea4335;
     }
 
     /*

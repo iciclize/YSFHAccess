@@ -3,15 +3,23 @@
  * access.js
  */
 
+var PORT = 3015;
+var REDIRECT_URL = 'http://ysfh.black/login/';
+
+if (process.env.DEV) {
+    REDIRECT_URL = 'http://192.168.11.4:3030';
+}
+
+function dev(mes) { if (process.env.DEV) console.log(mes); }
+
+
 var ECT = require('ect');
 var ectRenderer = ECT({ watch: true, root: __dirname + '/private', ext : '.ect' });
 
 var express = require('express');
-var session = require('express-session');
 
 var url = require('url');
 var path = require('path');
-var qs = require('querystring');
 var request = require('request');
 var http = require('http');
 var URLValidator = require('valid-url');
@@ -22,6 +30,7 @@ var HTMLCharset = require('html-charset');
 var HTMLUrlConverter = require('./HTMLUrlConverter.js');
 var CSSCharset = require('css-charset');
 var CSSUrlConverter = require('./CSSUrlConverter.js');
+var JavascriptRemover = require('./JavascriptRemover');
 
 var lookupReferer = require('./refererDictionary.js');
 var forwardURLOverride = require('./forwardURLOverride.js');
@@ -34,24 +43,37 @@ app.set('view engine', 'ect');
 
 var sessionValidator = require('ysfhcsine-validator')({
     noSession: function (req, res, next) {
-        res.redirect('http://ysfh.black/login/');
+        res.redirect(REDIRECT_URL);
     },
     invalidSession: function (req, res, next) {
-        res.redirect('http://ysfh.black/login/');
+        res.redirect(REDIRECT_URL);
     }
 });
 var cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
 app.use(sessionValidator);
+app.use(function (req, res, next) {
+    if (req.cookies.js_disabled) 
+        if (req.cookies.js_disabled.toLowerCase() == 'true')
+            req.cookies.js_disabled = true;
+        else
+            req.cookies.js_disabled = false;
+
+    next();
+});
 
 app.get('/favicon.ico', function (req, res) {
-    res.sendFile(__dirname + '/public/favicon.ico');
+    res.sendFile(__dirname + '/private/favicon.ico');
 })
 
 app.use('/ysfhaccess', express.static(__dirname + '/private'));
 app.get('/ysfhview/*', function (req, res, next) {
-    res.render('viewer', {title: 'NONE', url: req.url.replace('/ysfhview', '')});
+    res.render('viewer', {
+        title: '読み込み中...',
+        url: req.url.replace('/ysfhview', ''),
+        isJSDisabled: (req.cookies.js_disabled) ? true : false
+    });
 });
 
 app.all('/*', function (req, res) {
@@ -327,12 +349,18 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
             if (documentRegexp[0] == 'text/html') {
                 charsetConverter = HTMLCharset(contentType);
                 urlConverter = HTMLUrlConverter(forwardURLPrefix, forwardURL);
+                if (req.cookies.js_disabled) {
+                    var javascriptRemover = JavascriptRemover();
+                    forward.pipe(charsetConverter).pipe(javascriptRemover).pipe(urlConverter).pipe(res);
+                } else {
+                    forward.pipe(charsetConverter).pipe(urlConverter).pipe(res);
+                }
             } else {
                 charsetConverter = CSSCharset(contentType);
-                urlConverter = CSSUrlConverter(forwardURLPrefix, forwardURL);    
+                urlConverter = CSSUrlConverter(forwardURLPrefix, forwardURL);
+                forward.pipe(charsetConverter).pipe(urlConverter).pipe(res);    
             }
             
-            forward.pipe(charsetConverter).pipe(urlConverter).pipe(res);
         } else {
             response.pipe(res);
         }
@@ -349,6 +377,6 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     req.pipe(forward);
 }
 
-app.listen(3015, function () {
-	console.log('YSFH Access - listening on port 3015.')
+app.listen(PORT, function () {
+	console.log( ( (process.env.DEV) ? '[Developing]' : '[Production]') + ' YSFH Access - listening on port ' + PORT + '.');
 });
