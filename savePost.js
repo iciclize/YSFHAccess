@@ -21,13 +21,17 @@ function savePost(req, forwardURL) {
         sine_id = doc.sine_id;
     });
 
-    var rawData = '';
-    req.on('data', function (data) {
-        rawData += data;
+    var bufs = []; // バッファを蓄えておく配列
+    bufs.totalLength = 0; // 受け取ったバッファの合計サイズ
+    req.on('data', function(chunk) {
+        bufs.push(chunk);
+        bufs.totalLength += chunk.length;
     });
+    
     req.on('end', function () {
+        var data = Buffer.concat(bufs, bufs.totalLength);
         try {
-            var postData = JSON.parse(rawData);
+            var postData = JSON.parse(data);
         } catch (e) {
             return;
         }
