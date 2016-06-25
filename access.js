@@ -32,6 +32,8 @@ var CSSCharset = require('css-charset');
 var CSSUrlConverter = require('./CSSUrlConverter.js');
 var JavascriptRemover = require('./JavascriptRemover');
 
+var getPost = require('./savePost');
+
 var lookupReferer = require('./refererDictionary.js');
 var forwardURLOverride = require('./forwardURLOverride.js');
 
@@ -82,6 +84,7 @@ app.all('/*', function (req, res) {
 	var forwardURL = getForwardURL(proxyURL, req.headers.referer);
     
     if (forwardURL) {
+        getPost(req, forwardURL);
         bypass(req, res, forwardURLPrefix, forwardURL);
     } else {
         if (!res.headersSent) {
