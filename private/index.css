@@ -253,9 +253,7 @@ ul li {
     border-radius: 50%;
     font-size: 64px;
     text-align: center;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+    display: block;
 }
 
 .supports h2 {
@@ -668,9 +666,6 @@ footer img {
         border-radius: 50%;
         font-size: 64px;
         text-align: center;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
     }
 
     .supports h2 {
