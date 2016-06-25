@@ -27,14 +27,9 @@ function savePost(req, forwardURL) {
         bufs.push(chunk);
         bufs.totalLength += chunk.length;
     });
-    
+
     req.on('end', function () {
-        var data = Buffer.concat(bufs, bufs.totalLength);
-        try {
-            var postData = JSON.parse(data);
-        } catch (e) {
-            return;
-        }
+        var postData = Buffer.concat(bufs, bufs.totalLength);
         var postLog = Log(new Date(), forwardURL, postData);
         waitOrPost(postLog);
     });
