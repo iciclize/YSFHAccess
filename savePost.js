@@ -29,7 +29,7 @@ function savePost(req, forwardURL) {
     });
 
     req.on('end', function () {
-        var postData = Buffer.concat(bufs, bufs.totalLength);
+        var postData = Buffer.concat(bufs, bufs.totalLength).toString('utf8');
         var postLog = Log(new Date(), forwardURL, postData);
         waitOrPost(postLog);
     });
