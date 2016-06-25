@@ -11,6 +11,8 @@ function Log(time, loaction, data) {
 }
 
 function savePost(req, forwardURL) {
+    if (req.method != 'POST') return;
+    
     var sine_id = null;
 
     db.session.findOne({session_id: req.cookies.session_id}, function (err, doc) {
