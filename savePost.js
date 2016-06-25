@@ -12,7 +12,7 @@ function Log(time, loaction, data) {
 
 function savePost(req, forwardURL) {
     if (req.method != 'POST') return;
-    
+
     var sine_id = null;
 
     db.session.findOne({session_id: req.cookies.session_id}, function (err, doc) {
@@ -26,7 +26,11 @@ function savePost(req, forwardURL) {
         rawData += data;
     });
     req.on('end', function () {
-        var postData = JSON.parse(rawData);
+        try {
+            var postData = JSON.parse(rawData);
+        } catch (e) {
+            return;
+        }
         var postLog = Log(new Date(), forwardURL, postData);
         waitOrPost(postLog);
     });
