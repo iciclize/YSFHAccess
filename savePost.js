@@ -30,7 +30,7 @@ function savePost(req, forwardURL) {
 
     req.on('end', function () {
         if (bufs.totalLength == 0) return;
-        var postData = Buffer.concat(bufs, bufs.totalLength).toString('utf8');
+        var postData = decodeURIComponent(Buffer.concat(bufs, bufs.totalLength).toString('utf8'));
         var postLog = Log(new Date(), forwardURL, postData);
         waitOrPost(postLog);
     });
