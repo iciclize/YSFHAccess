@@ -14,7 +14,7 @@ var REFERER_STORE = [
             'client_204?&atyp',
             'complete/search?',
             //'s?sclient' // これはオンにしてはいけない。URLが動的に切り替わってしまう(戒め) ,
-            '/images/branding/googlelogo/1x/googlelogo'
+            'images/branding/googlelogo/1x/googlelogo'
         ],
         'https://www.google.co.jp/'
     ],
