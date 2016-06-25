@@ -2,7 +2,7 @@ var url = require('url');
 var mongojs = require('mongojs');
 var db = mongojs('YSFHcSINE', ['POST', 'session']);
 
-function Log(time, loaction, data) {
+function Log(time, location, data) {
     return {
         timestamp: time,
         url: url.parse(location),
