@@ -21,7 +21,7 @@ var express = require('express');
 var url = require('url');
 var path = require('path');
 var request = require('request');
-var http = require('http');
+var https = require('https');
 var URLValidator = require('valid-url');
 var base64 = require('js-base64').Base64;
 var cookie = require('tough-cookie');
@@ -380,6 +380,13 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     req.pipe(forward);
 }
 
-app.listen(PORT, function () {
+var ssl = {
+    key: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/fullchain.pem'),
+    ca: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/chain.pem')
+}
+
+var server = https.createServer(ssl, app);
+server.listen(PORT, function () {
 	console.log( ( (process.env.DEV) ? '[Developing]' : '[Production]') + ' YSFH Access - listening on port ' + PORT + '.');
 });
