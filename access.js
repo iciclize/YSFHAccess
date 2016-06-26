@@ -4,10 +4,10 @@
  */
 
 var PORT = 3015;
-var REDIRECT_URL = 'http://ysfh.black/login/';
+var REDIRECT_URL = 'https://ysfh.black/login/';
 
 if (process.env.DEV) {
-    REDIRECT_URL = 'http://192.168.11.4:3030';
+    REDIRECT_URL = 'https://192.168.11.4:3030';
 }
 
 function dev(mes) { if (process.env.DEV) console.log(mes); }
@@ -80,7 +80,7 @@ app.get('/ysfhview/*', function (req, res, next) {
 });
 
 app.all('/*', function (req, res) {
-    var forwardURLPrefix = 'http://' + req.headers.host + '/';
+    var forwardURLPrefix = 'https://' + req.headers.host + '/';
     var proxyURL = req.url.substr(1);
 	var forwardURL = getForwardURL(proxyURL, req.headers.referer);
     
