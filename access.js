@@ -18,6 +18,7 @@ var ectRenderer = ECT({ watch: true, root: __dirname + '/private', ext : '.ect' 
 
 var express = require('express');
 
+var fs = require('fs');
 var url = require('url');
 var path = require('path');
 var request = require('request');
