@@ -23,6 +23,18 @@ a {
     color: inherit;
 }
 
+header {
+    margin: 0 auto;
+    width: 960px;
+    padding: 10px 0;
+    color: white;
+    font-size: 16px;
+}
+
+header .fa {
+    padding-right: 8px;
+}
+
 h1 {
     font-size: 36px;
     margin: 0 0 32px;
@@ -405,7 +417,7 @@ footer img {
 
 
 @media screen and (max-width: 960px) {
-    .logo, .logo img, .urlform, .urlbar, .links, .supports ul {
+    .logo, .logo img, .urlform, .urlbar, .links, .supports ul, header {
         width: 620px;
     }
 
@@ -454,6 +466,10 @@ footer img {
     a {
         text-decoration: none;
         color: inherit;
+    }
+
+    header {
+        width: 96%;
     }
 
     h1 {
