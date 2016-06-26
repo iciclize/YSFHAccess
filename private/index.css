@@ -294,7 +294,7 @@ ul li {
 }
 
 .secure article {
-    margin-top: 90px;
+    margin-top: 100px;
     margin-left: 250px;
 }
 
@@ -694,10 +694,10 @@ footer img {
     }
 
     .secure .fa-lock {
-        width: 210px;
-        height: 324px;
+        width: 168px;
+        height: 222px;
         color: hsl(55, 100%, 50%);
-        font-size: 324px;
+        font-size: 224px;
         text-shadow: 4px 6px 3px hsla(0, 0%, 0%, 0.23);
     }
 
@@ -707,7 +707,7 @@ footer img {
 
     .secure article {
         margin-top: 90px;
-        margin-left: 250px;
+        margin-left: 0;
     }
 
     /*
