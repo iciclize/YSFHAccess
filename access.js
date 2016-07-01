@@ -83,6 +83,7 @@ app.get('/ysfhview/*', function (req, res, next) {
             {name: '書き換えなし', string: req.headers['user-agent']},
             {name: 'IE9', string: 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Sleipnir/2.9.8)'},
             {name: 'IE11', string: 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko'},
+            {name: 'IE7', string: 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; Trident/4.0; SLCC1)'},
             {name: 'UAなし(空)', string: ''}
         ]
     });
