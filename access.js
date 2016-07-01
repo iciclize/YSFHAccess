@@ -259,23 +259,17 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     
     var requestOptions = {
         uri: forwardURL,
-        gzip: true
+        gzip: true,
+        headers: (function () {
+            if (!req.cookies.ua) return null;
+            if (req.cookies.ua === '{NULL}') {
+                return {'User-Agent': ''};
+            } else {
+                return {'User-Agent': decodeURIComponent(req.cookies.ua)};
+            }
+        }())
     };
-
-    /**
-     * UserAgent書き換え
-     */
-    if (req.cookies.ua != '') {
-        if (req.cookies.ua == '{NULL}') {
-            requestOptions.headers = {
-                'user-agent': ''
-            };
-        } else {
-            requestOptions.headers = {
-                'user-agent': decodeURIComponent(req.cookies.ua)
-            };
-        }
-    }
+    
 
     var forward = request(requestOptions);
     
