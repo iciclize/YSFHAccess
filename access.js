@@ -267,7 +267,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
      */
     if (req.cookies.ua) {
         requestOptions.headers = {
-            'user-agent': req.cookies.ua
+            'user-agent': decodeURIComponent(req.cookies.ua)
         };
     }
 

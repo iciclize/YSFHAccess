@@ -131,7 +131,7 @@
                 var iframe = document.querySelector('iframe').contentWindow;
                 var select = document.querySelector('.ua-selector select');
                 var index = select.selectedIndex;
-                iframe.document.cookie = 'ua=' + select[index].value;
+                iframe.document.cookie = 'ua=' + encodeURIComponent(select[index].value);
             }
         </script>
         <div id="accessbar">
