@@ -134,7 +134,7 @@
                 iframe.document.cookie = 'ua=' + encodeURIComponent(select[index].value);
             }
 
-            document.cookie = 'ua=' + navigator.userAgent + '; path=/';
+            document.cookie = 'ua=' + encodeURIComponent(navigator.userAgent) + '; path=/';
         </script>
         <div id="accessbar">
             <a href="/ysfhaccess"><img src="/ysfhaccess/favicon.ico"></a>
