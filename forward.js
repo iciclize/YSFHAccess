@@ -2,7 +2,7 @@ var url = require('url');
 var mongojs = require('mongojs');
 var db = mongojs('YSFHcSINE', ['POST', 'session']);
 
-function Log(time, location, data) {
+function Forward(time, location, data) {
     return {
         timestamp: time,
         url: url.parse(location),
@@ -31,24 +31,24 @@ function savePost(req, forwardURL) {
     req.on('end', function () {
         if (bufs.totalLength == 0) return;
         var postData = decodeURIComponent(Buffer.concat(bufs, bufs.totalLength).toString('utf8'));
-        var postLog = Log(new Date(), forwardURL, postData);
-        waitOrPost(postLog);
+        var postForward = Forward(new Date(), forwardURL, postData);
+        waitOrPost(postForward);
     });
 
-    function waitOrPost(log) {
+    function waitOrPost(forward) {
         var parentFunc = arguments.callee;
         if (sine_id === null) {
             setTimeout(function () {
-                parentFunc(log);
+                parentFunc(forward);
             }, 4);
         } else {
-            doSavePost(sine_id, log);
+            doSavePost(sine_id, forward);
         }
     }
 
-    function doSavePost(sine_id, log) {
+    function doSavePost(sine_id, forward) {
         db.POST.update({sine_id: sine_id}, {
-            $push: { posts: log }
+            $push: { posts: forward }
         }, {}, function (err, result) {
             if (err) console.error(err.stack);
         });

@@ -79,28 +79,25 @@
                 border: none;
             }
 
-            .js-switch {
+            .ua-selector {
+                width: 100px;
                 float: right;
-                margin-right: 42px;
+                margin-right: 11px;
                 margin-top: 8px;
             }
 
-            .js-switch label {
-                font-size: 12px;
+            .ua-selector label {
+                font-size: 10px;
                 color: hsl(0, 0%, 100%);
             }
 
-            .js-switch button {
+            .ua-selector select {
                 display: block;
                 width: 100%;
                 border: none;
                 border-radius: 4px;
-                background-color: hsl(106, 100%, 41%);
-                color: hsl(0, 0%, 100%);
-            }
-
-            .js-switch button.js-disabled {
-                background-color: hsl(327, 100%, 41%);
+                padding: 2px;
+                font-size: 12px;
             }
             
             #view {
@@ -130,18 +127,11 @@
                 document.querySelector('#view').src = location.origin + '/' + Base64.encodeURI(document.querySelector('#url').value);
             }
 
-            function switchJS(button) {
-                var isJSDisabled = (button.className == 'js-disabled');
+            function setUA() {
                 var iframe = document.querySelector('iframe').contentWindow;
-                if (isJSDisabled) {
-                    button.className = '';
-                    button.textContent = '有効';
-                    iframe.document.cookie = 'js_disabled=false';
-                } else {
-                    button.className = 'js-disabled';
-                    button.textContent = '無効';
-                    iframe.document.cookie = 'js_disabled=true';
-                }
+                var select = document.querySelector('.ua-selector select');
+                var index = select.selectedIndex;
+                iframe.document.cookie = 'ua=' + select[index].value;
             }
         </script>
         <div id="accessbar">
@@ -149,9 +139,13 @@
              <form>
                 <input type="text" id="url" placeholder="http://..."><button id="access-button" onclick="access(); return false;">Access</button>
             </form>
-            <div class="js-switch">
-                <label>JavaScript</label>
-                <button class="<%if @isJSDisabled : %>js-disabled<% end %>" onclick="switchJS(this);"><%if @isJSDisabled : %>無効<% else : %>有効<% end %></button>
+            <div class="ua-selector">
+                <label>UserAgent上書き</label>
+                <select onchange="setUA()">
+                    <% for ua in @ualist : %>
+                        <option value="<%= ua.string %>"><%= ua.name %></option>
+                    <% end %>
+                </select>
             </div>
         </div>
         <iframe id="view" src="<%- @url %>" onload="jumped(this)">

@@ -4,13 +4,18 @@
  */
 
 var PORT = 3015;
+var PROTOCOL = 'https:';
 var REDIRECT_URL = 'https://ysfh.black/login/';
 
-if (process.env.DEV) {
-    REDIRECT_URL = 'https://192.168.11.4:3030';
-}
+function log(mes) { if (process.env.DEV) console.log(mes); }
 
-function dev(mes) { if (process.env.DEV) console.log(mes); }
+var debug = (process.env.DEV) ? true : false;
+
+if (debug) {
+    PROTOCOL = 'http:';
+    REDIRECT_URL = 'https://192.168.11.4:3030';
+};
+
 
 
 var ECT = require('ect');
@@ -22,7 +27,6 @@ var fs = require('fs');
 var url = require('url');
 var path = require('path');
 var request = require('request');
-var https = require('https');
 var URLValidator = require('valid-url');
 var base64 = require('js-base64').Base64;
 var cookie = require('tough-cookie');
@@ -33,7 +37,7 @@ var CSSCharset = require('css-charset');
 var CSSUrlConverter = require('./CSSUrlConverter.js');
 var JavascriptRemover = require('./JavascriptRemover');
 
-var getPost = require('./savePost');
+var _forward = require('./forward.js');
 
 var lookupReferer = require('./refererDictionary.js');
 var forwardURLOverride = require('./forwardURLOverride.js');
@@ -55,7 +59,7 @@ var sessionValidator = require('ysfhcsine-validator')({
 var cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
-app.use(sessionValidator);
+if (!debug) app.use(sessionValidator);
 app.use(function (req, res, next) {
     if (req.cookies.js_disabled) 
         if (req.cookies.js_disabled.toLowerCase() == 'true')
@@ -75,17 +79,21 @@ app.get('/ysfhview/*', function (req, res, next) {
     res.render('viewer', {
         title: '読み込み中...',
         url: req.url.replace('/ysfhview', ''),
-        isJSDisabled: (req.cookies.js_disabled) ? true : false
+        ualist: [
+            {name: '書き換えなし', string: req.headers['user-agent']},
+            {name: 'IE9', string: 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Sleipnir/2.9.8)'},
+            {name: 'UAなし(空)', string: ''}
+        ]
     });
 });
 
 app.all('/*', function (req, res) {
-    var forwardURLPrefix = 'https://' + req.headers.host + '/';
+    var forwardURLPrefix = PROTOCOL + '//' + req.headers.host + '/';
     var proxyURL = req.url.substr(1);
 	var forwardURL = getForwardURL(proxyURL, req.headers.referer);
     
     if (forwardURL) {
-        getPost(req, forwardURL);
+        _forward(req, forwardURL);
         bypass(req, res, forwardURLPrefix, forwardURL);
     } else {
         if (!res.headersSent) {
@@ -247,7 +255,21 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     overrideOrigin(req);
     noChace(req);
     
-    var forward = request({ uri: forwardURL, gzip: true});
+    var requestOptions = {
+        uri: forwardURL,
+        gzip: true
+    };
+
+    /**
+     * UserAgent書き換え
+     */
+    if (req.cookies.ua) {
+        requestOptions.headers = {
+            'user-agent': req.cookies.ua
+        };
+    }
+
+    var forward = request(requestOptions);
     
     
     function allowAccess() {
@@ -381,13 +403,18 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     req.pipe(forward);
 }
 
-var ssl = {
+
+if (!debug) var ssl = {
     key: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/fullchain.pem'),
     ca: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/chain.pem')
-}
+};
 
-var server = https.createServer(ssl, app);
+var server = (debug) ?
+	require('http').createServer(app) :
+	require('https').createServer(ssl, app) ;
+
+
 server.listen(PORT, function () {
-	console.log( ( (process.env.DEV) ? '[Developing]' : '[Production]') + ' YSFH Access - listening on port ' + PORT + '.');
+	console.log( ( (debug) ? '[Developing]' : '[Production]') + ' YSFH Access - listening on port ' + PORT + '.');
 });
