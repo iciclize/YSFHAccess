@@ -276,7 +276,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
     
     function allowAccess() {
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Content-Security-Policy', 'connect-src *');
+        res.setHeader('Content-Security-Policy', "connect-src *; script-src * 'unsafe-eval' 'unsafe-inline'");
         res.removeHeader('X-Frame-Options');
     }
     
