@@ -293,7 +293,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
                             
                         var pair = item.substring(0, item.indexOf(';')); 
                         var eq_idx = pair.indexOf('=');
-                        if (eq_idx < 0) return;
+                        if (eq_idx < 0) return null;
 
                         var key = pair.substr(0, eq_idx).trim();
                         var val = pair.substr(++eq_idx, pair.length).trim();
@@ -302,6 +302,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
                         return {key: key, value: val};
                     }(item));
                     
+                    if (!parsedCookie) return null;
                     var key = parsedCookie.key;
                     var val = parsedCookie.value;
 
