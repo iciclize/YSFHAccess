@@ -139,10 +139,19 @@
                 var iframe = document.querySelector('iframe').contentWindow;
                 var select = document.querySelector('.ua-selector select');
                 var index = select.selectedIndex;
-                iframe.document.cookie = 'ua=' + encodeURIComponent(select[index].value);
+                if (index == 0) {
+                  /* UAなし */
+                  iframe.document.cookie = 'ua=' + encodeURIComponent('{NULL}') + '; path=/';
+                } else if (index == 1) {
+                  /* 標準UA */
+                  iframe.document.cookie = 'ua=' + encodeURIComponent(navigator.userAgent) + '; path=/';
+                } else {
+                  iframe.document.cookie = 'ua=' + encodeURIComponent(select[index].value) + '; path=/';
+                }
             }
 
-            document.cookie = 'ua=' + encodeURIComponent(navigator.userAgent) + '; path=/';
+            // document.cookie = 'ua=' + encodeURIComponent(navigator.userAgent) + '; path=/';
+            document.cookie = 'ua=' + encodeURIComponent('{NULL}') + '; path=/';
         </script>
         <div id="accessbar">
             <a href="/ysfhaccess"><img src="/ysfhaccess/favicon.ico"></a>
@@ -158,8 +167,7 @@
                 </select>
             </div>
         </div>
-        <iframe id="view" src="<%- @url %>" onload="jumped(this)">
-        </iframe>
+        <iframe id="view" src="<%- @url %>" onload="jumped(this)"></iframe>
     </body>
 
 </html>
