@@ -3,19 +3,12 @@
  * access.js
  */
 
-var PORT = 3015;
+var PORT = 3015 || process.env.PORT;
 var PROTOCOL = 'https:';
-var REDIRECT_URL = 'https://ysfh.black/login/';
 
 function log(mes) { if (process.env.DEV) console.log(mes); }
 
 var debug = (process.env.DEV) ? true : false;
-
-if (debug) {
-    PROTOCOL = 'http:';
-    REDIRECT_URL = 'https://192.168.11.4:3030';
-};
-
 
 
 var ECT = require('ect');
@@ -46,18 +39,9 @@ app.engine('ect', ectRenderer.render);
 app.set('views', __dirname + '/private');
 app.set('view engine', 'ect');
 
-var sessionValidator = require('ysfhcsine-validator')({
-    noSession: function (req, res, next) {
-        res.redirect(REDIRECT_URL);
-    },
-    invalidSession: function (req, res, next) {
-        res.redirect(REDIRECT_URL);
-    }
-});
 var cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
-if (!debug) app.use(sessionValidator);
 app.use(function (req, res, next) {
     if (req.cookies.js_disabled) 
         if (req.cookies.js_disabled.toLowerCase() == 'true')

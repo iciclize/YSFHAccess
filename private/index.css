@@ -61,23 +61,24 @@ ul li {
     padding: 40px 0;
 }
 
-.logo {
+.access-title {
     width: 640px;
     margin: 0 auto;
     padding: 20px 0 0;
 }
 
-.logo img {
-    width: 640px;
+.access-title h1 {
+  font-size: 82px;
+  color: white;
+  text-align: center;
 }
 
-.logo p {
+.access-title p {
     margin-top: 20px;
     font-size: 18px;
     text-align: center;
     color: white;
     padding: 12px 0;
-    color: hsl(210, 100%, 92%);
 }
 
 .urlform {
@@ -244,6 +245,7 @@ ul li {
 
 .supports ul li {
     /* width: 280px; */
+    flex-basis: 33%;
     margin: 0 20px;
     list-style: none;
 }
