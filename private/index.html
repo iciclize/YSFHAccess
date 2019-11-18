@@ -9,10 +9,11 @@
     </head>
     <body>
         <div class="top">
-            <div class="access-title">
-                <h1>ACCESS</h1>
-                <p class="copy">学校のフィルタリングを回避してYouTubeなどを見られるサイト</p>
-            </div>
+          <div class="logo">
+            <img alt="logo" src="./access.svg">
+            <p class="copy">学校のフィルタリングを回避してYouTubeなどを見られるサイト</p>
+
+          </div>
             <form class="urlform">
                 <input type="text" class="urlbar" placeholder="URL">
                 <button onclick="location.href = location.protocol + '//' + location.host + '/ysfhview/' + Base64.encodeURI(document.querySelector('.urlbar').value); return false;">Access</button>
@@ -48,17 +49,17 @@
                     <li class="youtube">
                         <div class="fa youtube">&#xf16a;</div>
                         <h2>Youtube</h2>
-                        <p><!--とりあえずYouTube動画は観られます--></p>
+                        <p>とりあえずYouTube動画は観られます</p>
                     </li>
                     <li class="twitter">
                         <div class="fa twitter">&#xf099;</div>
                         <h2>Twitter</h2>
-                        <p><!--Twitterも一応できないこともない--></p>
+                        <p>Twitterも一応できないこともない。画面右上のUserAgentをIE9とかにする必要あり。</p>
                     </li>
                     <li class="facebook">
                         <div class="fa facebook">&#xf230;</div>
                         <h2>Facebook</h2>
-                        <p></p>
+                        <p>ちょい厳しいかも(適当)</p>
                     </li>
                 </ul>
             </div>
@@ -84,6 +85,28 @@
                     <li>当アプリケーションを利用することで発生したいかなる損害についても開発者は責任を負いかねます。</li>
                 </ul>
             </div>
+        </section>
+
+        <section class="history">
+          <div class="container">
+            <h1>このサイトの歴史</h1>
+            <div class="episodes">
+              <article>
+                <h2>成り立ち</h2>
+                <p>このサイトはもともと、開発者がYSFH在学中の2016年に作ったものです。ProxySite.comというプロキシサイトに影響を受けて、また、その問題点を克服すべく作りました。</p>
+                <p>ProxySite.comとはいわゆるWebプロキシサイトの一つで、Webサイトへのアクセスを代行することであらゆるサイトを閲覧可能にするサービスです。</p>
+                <p>しかしproxysite.comにはセキュリティ上、同じ場所から頻繁にアクセスすると、しばらくの間アクセスが制限されるという特徴がありました。そのため、同じIPアドレスを共有する学校で、何人かがProxySite.comを利用し、その利用回数が制限値まで到達してしまうと、ProxySite.comは学校からのアクセスを拒否するようになり、誰も利用できなくなってしまうことがありました。</p>
+                <p>そこで、生徒全員がアクセス回数の制限なしでWebサイトを閲覧できるようにするため、2016年2月6日、ProxySite.comのクローンを自作しようと思い立ち、YSFH Bypassという名前でプロジェクトを始めました。</p>
+              </article>
+              <article>
+                <h2>公開と閉鎖、それから再公開</h2>
+                <p>YSFH BypassはYSFH Accessに改称し、2016年7月頃に、まずYSFHの生徒だけがアクセスできるようなポータルサイトを作って、その中に隠すようにしてYSFH Accessを公開しました。</p>
+                <p>学校ではGoogle画像検索すらフィルタリングがかかったものですから、少しは利用されたものと思います。開発者はYSFH Accessを作って満足したので、YSFH卒業と同時にサイトの公開は停止しました。</p>
+                <p>それから時は経ち、YSFH Accessのことを思い出し、これを一般公開しておいたら全国の児童生徒は使うかもしれないと思いました。</p>
+                <p>そして2019年11月、当時の微妙にダサいデザインはそのままに、再びYSFH Accessの公開に至りました。めでたし。</p>
+              </article>
+            </div>
+          </div>
         </section>
 
         <section class="developer">

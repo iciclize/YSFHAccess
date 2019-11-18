@@ -61,19 +61,20 @@ ul li {
     padding: 40px 0;
 }
 
-.access-title {
+.logo {
     width: 640px;
     margin: 0 auto;
     padding: 20px 0 0;
 }
 
-.access-title h1 {
+.logo img {
+  width: 640px;
   font-size: 82px;
   color: white;
   text-align: center;
 }
 
-.access-title p {
+.logo p {
     margin-top: 20px;
     font-size: 18px;
     text-align: center;
