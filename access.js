@@ -3,7 +3,7 @@
  * access.js
  */
 
-var PORT = 3015 || process.env.PORT;
+var PORT = process.env.PORT || 3015;
 var PROTOCOL = 'https:';
 
 function log(mes) { if (process.env.DEV) console.log(mes); }
@@ -62,11 +62,11 @@ app.get('/ysfhview/*', function (req, res, next) {
         title: '読み込み中...',
         url: req.url.replace('/ysfhview', ''),
         ualist: [
+            {name: 'UAなし(空)', string: '{NULL}'},
             {name: 'ブラウザ標準', string: req.headers['user-agent']},
-            {name: 'IE9', string: 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Sleipnir/2.9.8)'},
             {name: 'IE11', string: 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko'},
+            {name: 'IE9', string: 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Sleipnir/2.9.8)'},
             {name: 'IE7', string: 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; Trident/4.0; SLCC1)'},
-            {name: 'UAなし(空)', string: '{NULL}'}
         ]
     });
 });
@@ -243,7 +243,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         gzip: true,
         headers: (function () {
             if (!req.cookies.ua) return null;
-            if (req.cookies.ua === '{NULL}') {
+            if (req.cookies.ua == '{NULL}') {
                 return {'User-Agent': ''};
             } else {
                 return {'User-Agent': decodeURIComponent(req.cookies.ua)};
@@ -388,16 +388,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
 }
 
 
-if (!debug) var ssl = {
-    key: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/fullchain.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/chain.pem')
-};
-
-var server = (debug) ?
-	require('http').createServer(app) :
-	require('https').createServer(ssl, app) ;
-
+var server = require('http').createServer(app);
 
 server.listen(PORT, function () {
 	console.log( ( (debug) ? '[Developing]' : '[Production]') + ' YSFH Access - listening on port ' + PORT + '.');
