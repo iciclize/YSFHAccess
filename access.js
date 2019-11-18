@@ -388,16 +388,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
 }
 
 
-if (!debug) var ssl = {
-    key: fs.readFileSync('/etc/letsencrypt/live/access.iciclize.net/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/access.iciclize.net/fullchain.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/access.iciclize.net/chain.pem')
-};
-
-var server = (debug) ?
-	require('http').createServer(app) :
-	require('https').createServer(ssl, app) ;
-
+var server = require('http').createServer(app);
 
 server.listen(PORT, function () {
 	console.log( ( (debug) ? '[Developing]' : '[Production]') + ' YSFH Access - listening on port ' + PORT + '.');
