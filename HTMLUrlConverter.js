@@ -19,6 +19,7 @@ function URLConverter(forwardURLPrefix, forwardURL) {
                     + clientCodes.urlResolver()
                     + clientCodes.overrideXHR(forwardURLPrefix)
                     + clientCodes.base64URLEncoder()
+                    + clientCodes.matomoTracker()
                     + '</script>\n'
                     + data);
                 first = false;
