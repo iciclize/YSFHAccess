@@ -381,7 +381,10 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         console.log(err);
         res.setHeader('Content-Type', 'text/html; charset=UTF-8');
         res.write('<h1>URLがちょっと歯当たんよ〜</h1>');
-        res.end('<pre>' + err.stack + '</pre>');
+        if (debug)
+          res.end('<pre>' + err.stack + '</pre>');
+        else
+          res.end('');
     });
     
     req.pipe(forward);

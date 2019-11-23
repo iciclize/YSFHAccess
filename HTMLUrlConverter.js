@@ -36,7 +36,7 @@ function URLConverter(forwardURLPrefix, forwardURL) {
         function (elem) {
             getURLPropertyNames(elem.name).forEach(function (prop) {
                 elem.getAttribute(prop, function (rawURL) {
-                    if (typeof rawURL === 'string') return;
+                    if (typeof rawURL !== 'string') return;
                     if (rawURL.substr(0, 5) === 'data:') return;
                     elem.setAttribute(prop, convertToForwardURL(rawURL));
                 });
