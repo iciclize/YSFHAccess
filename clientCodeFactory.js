@@ -3,6 +3,7 @@ var uglify = require('uglify-js');
 var defineSetterScript = uglify.minify(__dirname + '/clientCode/defineSetter.js');
 var base64URLEncodingScript = uglify.minify(__dirname + '/clientCode/base64.min.js');
 var resolveURLScript = uglify.minify(__dirname + '/clientCode/resolveURL.js');
+var matomoTrackerScript = uglify.minify(__dirname + '/clientCode/matomoTracker.js');
 
 function overrideXHR(forwardUrlPrefix) {
     return '(function() {' +
@@ -32,9 +33,14 @@ function urlResolver() {
     return resolveURLScript.code;
 }
 
+function matomoTracker() {
+    return matomoTrackerScript.code;
+}
+
 module.exports = {
     base64URLEncoder: base64URLEncoder,
     defineSetter: defineSetter,
     overrideXHR: overrideXHR,
+    matomoTracker: matomoTracker,
     urlResolver: urlResolver
 };

@@ -3,19 +3,12 @@
  * access.js
  */
 
-var PORT = 3015;
+var PORT = process.env.PORT || 3015;
 var PROTOCOL = 'https:';
-var REDIRECT_URL = 'https://ysfh.black/login/';
 
 function log(mes) { if (process.env.DEV) console.log(mes); }
 
 var debug = (process.env.DEV) ? true : false;
-
-if (debug) {
-    PROTOCOL = 'http:';
-    REDIRECT_URL = 'https://192.168.11.4:3030';
-};
-
 
 
 var ECT = require('ect');
@@ -46,18 +39,9 @@ app.engine('ect', ectRenderer.render);
 app.set('views', __dirname + '/private');
 app.set('view engine', 'ect');
 
-var sessionValidator = require('ysfhcsine-validator')({
-    noSession: function (req, res, next) {
-        res.redirect(REDIRECT_URL);
-    },
-    invalidSession: function (req, res, next) {
-        res.redirect(REDIRECT_URL);
-    }
-});
 var cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
-if (!debug) app.use(sessionValidator);
 app.use(function (req, res, next) {
     if (req.cookies.js_disabled) 
         if (req.cookies.js_disabled.toLowerCase() == 'true')
@@ -78,11 +62,11 @@ app.get('/ysfhview/*', function (req, res, next) {
         title: '読み込み中...',
         url: req.url.replace('/ysfhview', ''),
         ualist: [
+            {name: 'UAなし(空)', string: '{NULL}'},
             {name: 'ブラウザ標準', string: req.headers['user-agent']},
-            {name: 'IE9', string: 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Sleipnir/2.9.8)'},
             {name: 'IE11', string: 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko'},
+            {name: 'IE9', string: 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Sleipnir/2.9.8)'},
             {name: 'IE7', string: 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; Trident/4.0; SLCC1)'},
-            {name: 'UAなし(空)', string: '{NULL}'}
         ]
     });
 });
@@ -259,7 +243,7 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         gzip: true,
         headers: (function () {
             if (!req.cookies.ua) return null;
-            if (req.cookies.ua === '{NULL}') {
+            if (req.cookies.ua == '{NULL}') {
                 return {'User-Agent': ''};
             } else {
                 return {'User-Agent': decodeURIComponent(req.cookies.ua)};
@@ -397,23 +381,17 @@ function bypass(req, res, forwardURLPrefix, forwardURL) {
         console.log(err);
         res.setHeader('Content-Type', 'text/html; charset=UTF-8');
         res.write('<h1>URLがちょっと歯当たんよ〜</h1>');
-        res.end('<pre>' + err.stack + '</pre>');
+        if (debug)
+          res.end('<pre>' + err.stack + '</pre>');
+        else
+          res.end('');
     });
     
     req.pipe(forward);
 }
 
 
-if (!debug) var ssl = {
-    key: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/fullchain.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/ysfh.black/chain.pem')
-};
-
-var server = (debug) ?
-	require('http').createServer(app) :
-	require('https').createServer(ssl, app) ;
-
+var server = require('http').createServer(app);
 
 server.listen(PORT, function () {
 	console.log( ( (debug) ? '[Developing]' : '[Production]') + ' YSFH Access - listening on port ' + PORT + '.');

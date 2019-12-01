@@ -68,7 +68,10 @@ ul li {
 }
 
 .logo img {
-    width: 640px;
+  width: 640px;
+  font-size: 82px;
+  color: white;
+  text-align: center;
 }
 
 .logo p {
@@ -77,7 +80,6 @@ ul li {
     text-align: center;
     color: white;
     padding: 12px 0;
-    color: hsl(210, 100%, 92%);
 }
 
 .urlform {
@@ -244,6 +246,7 @@ ul li {
 
 .supports ul li {
     /* width: 280px; */
+    flex-basis: 33%;
     margin: 0 20px;
     list-style: none;
 }

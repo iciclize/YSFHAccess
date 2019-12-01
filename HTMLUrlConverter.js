@@ -19,6 +19,7 @@ function URLConverter(forwardURLPrefix, forwardURL) {
                     + clientCodes.urlResolver()
                     + clientCodes.overrideXHR(forwardURLPrefix)
                     + clientCodes.base64URLEncoder()
+                    + clientCodes.matomoTracker()
                     + '</script>\n'
                     + data);
                 first = false;
@@ -36,7 +37,7 @@ function URLConverter(forwardURLPrefix, forwardURL) {
         function (elem) {
             getURLPropertyNames(elem.name).forEach(function (prop) {
                 elem.getAttribute(prop, function (rawURL) {
-                    if (!rawURL) return;
+                    if (typeof rawURL !== 'string') return;
                     if (rawURL.substr(0, 5) === 'data:') return;
                     elem.setAttribute(prop, convertToForwardURL(rawURL));
                 });
