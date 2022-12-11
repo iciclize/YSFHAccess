@@ -21,7 +21,7 @@
     "cookie-parser": "^1.4.1",
     "css-charset": "0.0.4",
     "ect": "^0.5.9",
-    "express": "^4.13.4",
+    "express": "^4.17.3",
     "express-session": "^1.13.0",
     "html-charset": "0.0.8",
     "js-base64": "^2.1.9",
